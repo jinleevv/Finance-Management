@@ -342,7 +342,7 @@ class MyMissingBankTransactionLists(APIView):
         last_name = serializer.data['last_name']
 
         bank_transactions = BankTransactionList.objects.filter(first_name=first_name.upper(), last_name=last_name.upper())
-        print(bank_transactions.all())
+
         data_not_in_transaction = bank_transactions.exclude(
             trans_date__in=TaxTransactionForm.objects.values_list('trans_date', flat=True),
             billing_amount__in=TaxTransactionForm.objects.values_list('billing_amount', flat=True),
@@ -370,7 +370,7 @@ class MyMatchingTransactionLists(APIView):
         bank_lists_set = set((obj.billing_amount, obj.trans_date, (obj.first_name + " " + obj.last_name)) for obj in bank_lists)
 
         common_elements = transactions_set.intersection(bank_lists_set)
-        print(common_elements)
+
         common_transaction_lists = TaxTransactionForm.objects.filter(
                 billing_amount__in=[amount for amount, date, name in common_elements],
                 trans_date__in=[date for amount, date, name in common_elements],
