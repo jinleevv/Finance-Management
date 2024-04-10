@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 
 interface AnimatedButtonProps {
   title: string;
+  description: string;
   handleFunc: () => {};
 }
 
@@ -17,7 +18,7 @@ const wheel = (y: number) => {
   return `translateY(${-imgHeight * (y < 0 ? 6 : 1) - (y % (imgHeight * 5))}px`;
 };
 
-const AnimatedButton = ({ title, handleFunc }: AnimatedButtonProps) => {
+const AnimatedButton = ({ title, description, handleFunc }: AnimatedButtonProps) => {
   useEffect(() => {
     const preventDefault = (e: Event) => e.preventDefault();
     document.addEventListener("gesturestart", preventDefault);
@@ -67,7 +68,7 @@ const AnimatedButton = ({ title, handleFunc }: AnimatedButtonProps) => {
   return (
     <animated.div
       ref={target}
-      className="relative w-full h-[200px] rounded-md bg-white shadow-md transition-shadow-opacity will-change-transform border-4 border-sky-950 cursor-grab overflow-hidden touch-action-none hover:shadow-2xl"
+      className="relative w-full h-[200px] cursor-grab overflow-hidden touch-action-none hover:shadow-2xl"
       style={{
         transform: "perspective(600px)",
         x,
@@ -78,7 +79,17 @@ const AnimatedButton = ({ title, handleFunc }: AnimatedButtonProps) => {
         rotateZ,
       }}
     >
-      <Button className="w-full h-full text-lg" onClick={handleFunc}>{title}</Button>
+      <Button
+        className="flex h-full w-full items-center text-xl text-black select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-lg hover:shadow-lg"
+        onClick={handleFunc}
+      >
+        <div className="mb-2 mt-4 ml-4 text-lg font-medium text-left">
+          {title}
+          <p className="text-sm leading-tight text-muted-foreground">
+            {description}
+          </p>
+        </div>
+      </Button>
     </animated.div>
   );
 };

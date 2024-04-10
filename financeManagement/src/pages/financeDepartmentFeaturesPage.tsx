@@ -21,20 +21,20 @@ const FinanceDepartmentFeatures = () => {
   function handleDownloadLists() {
     if (department === "Finance") {
       navigate("/main/download-transaction");
-      return 1
+      return 1;
     } else {
       toast.error("You do not have permission");
-      return 0
+      return 0;
     }
   }
 
   function handleUploadBankTransactionLists() {
     if (department === "Finance") {
       navigate("/main/upload-bank-transaction-lists");
-      return 1
+      return 1;
     } else {
       toast.error("You do not have permission");
-      return 0
+      return 0;
     }
   }
 
@@ -44,10 +44,10 @@ const FinanceDepartmentFeatures = () => {
         setBankTableData(res.data);
       });
       navigate("/main/view-bank-transaction-lists");
-      return 1
+      return 1;
     } else {
       toast.error("You do not have permission");
-      return 0
+      return 0;
     }
   }
 
@@ -121,10 +121,24 @@ const FinanceDepartmentFeatures = () => {
             </CardHeader>
             <CardContent>
               <div className="flex gap-8 mb-4">
-                <AnimatedButton title={"Upload Bank Transaction Lists"} handleFunc={handleUploadBankTransactionLists}/>
-                <AnimatedButton title={"Download Transaction Lists"} handleFunc={handleDownloadLists}/>
+                <AnimatedButton
+                  title={"Upload Bank Transaction Lists"}
+                  description={"Upload Bank Transaction Lists"}
+                  handleFunc={handleUploadBankTransactionLists}
+                />
+                <AnimatedButton
+                  title={"Download Transaction Lists"}
+                  description={"Download Transaction Lists"}
+                  handleFunc={handleDownloadLists}
+                />
               </div>
-              <div><AnimatedButton title={"Bank Transaction Lists"} handleFunc={handleViewBankTransactionLists}/></div>
+              <div>
+                <AnimatedButton
+                  title={"Bank Transaction Lists"}
+                  description={"Bank Transaction Lists"}
+                  handleFunc={handleViewBankTransactionLists}
+                />
+              </div>
               {/* <ul className="w-full grid gap-3 p-6 lg:grid-cols-[0.8fr_1fr] sm:grid-cols-1">
               <li className="row-span-3">
                 <Button
