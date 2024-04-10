@@ -53,6 +53,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ArrowLeftIcon, ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { useNavigate } from "react-router-dom";
 import { useHooks } from "@/hooks";
+import { useEffect } from "react";
 
 const formSchema = z.object({
   date: z.date({
@@ -60,6 +61,8 @@ const formSchema = z.object({
   }),
   category: z.string().min(1, { message: "It is required" }),
   billing_amount: z.string().min(1, { message: "It is required" }),
+  tps: z.string().min(1, { message: "It is required" }),
+  tvq: z.string().min(1, { message: "It is required" }),
   merchant_name: z.string().min(1, { message: "It is required" }),
   purpose: z.string().min(1, { message: "It is required" }),
   project: z.string().min(1, { message: "It is required" }),
@@ -77,6 +80,17 @@ const TaxTransactionForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
+
+  useEffect(() => {
+    const billingAmount = parseFloat(form.getValues().billing_amount);
+    if (!isNaN(billingAmount)) {
+      const tvqValue = (billingAmount * 0.09975).toFixed(3).toString();
+      const tpsValue = (billingAmount * 0.05).toFixed(3).toString();
+      form.setValue("tvq", tvqValue);
+      form.setValue("tps", tpsValue);
+    }
+  }, [form.watch("billing_amount")]);
+
   const fileRef = form.register("file");
 
   function handleCancel() {
@@ -98,6 +112,8 @@ const TaxTransactionForm = () => {
       data.append("date", values.date.toISOString().split("T")[0]);
       data.append("file", values.file[0], filename);
       data.append("billing_amount", values.billing_amount);
+      data.append("tps", values.tps);
+      data.append("tvq", values.tvq);
       data.append("merchant_name", values.merchant_name);
       data.append("purpose", values.purpose);
       data.append("full_name", userName.toUpperCase());
@@ -113,6 +129,8 @@ const TaxTransactionForm = () => {
           form.reset({
             category: "",
             billing_amount: "",
+            tps: "",
+            tvq: "",
             merchant_name: "",
             purpose: "",
             project: "",
@@ -124,7 +142,7 @@ const TaxTransactionForm = () => {
             description: today.toISOString(),
           });
         })
-        .catch((err) => toast.error(err.toISOString));
+        .catch(() => toast.error("Updating the transaction history failed"));
     } catch (error) {
       toast("Updating the transaction history failed");
     }
@@ -148,80 +166,25 @@ const TaxTransactionForm = () => {
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-3">
-                <div className="flex gap-20 sm:gap-3">
-                  <div className="grid space-y-3">
-                    <Label htmlFor="image_file">Image File</Label>
-                    <FormField
-                      control={form.control}
-                      name="file"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormMessage className="-mt-2 text-[13.5px]"></FormMessage>
-                          <FormControl>
-                            <Input
-                              className="w-full xsm:w-11/12"
-                              id="file"
-                              type="file"
-                              {...fileRef}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="grid space-y-3">
-                    <Label htmlFor="project">Project</Label>
-                    <FormField
-                      control={form.control}
-                      name="project"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormMessage className="-mt-2 text-[13.5px]"></FormMessage>
-                          <FormControl>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger
-                                asChild
-                                className="w-full h-full xsm:w-11/12 overflow-hidden"
-                              >
-                                <Button variant="outline">
-                                  {field.value ? (
-                                    field.value
-                                  ) : (
-                                    <span>Choose a project</span>
-                                  )}
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent className="w-full h-full break-all">
-                                <DropdownMenuLabel>
-                                  Choose a project
-                                </DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuRadioGroup
-                                  value={field.value}
-                                  onValueChange={field.onChange}
-                                  className="w-[400px] text-center"
-                                >
-                                  <DropdownMenuRadioItem value="CAM1">
-                                    CAM1
-                                  </DropdownMenuRadioItem>
-                                  <DropdownMenuRadioItem value="CAM2">
-                                    CAM2
-                                  </DropdownMenuRadioItem>
-                                  <DropdownMenuRadioItem value="PCAM">
-                                    PCAM
-                                  </DropdownMenuRadioItem>
-                                  <DropdownMenuRadioItem value="N/A">
-                                    N/A
-                                  </DropdownMenuRadioItem>
-                                </DropdownMenuRadioGroup>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
+                <Label htmlFor="image_file">Image File</Label>
+                <FormField
+                  control={form.control}
+                  name="file"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormMessage className="-mt-2 text-[13.5px]"></FormMessage>
+                      <FormControl>
+                        <Input
+                          className="w-full xsm:w-11/12"
+                          id="file"
+                          type="file"
+                          {...fileRef}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
                 <div className="flex gap-20 sm:gap-3">
                   <div className="grid space-y-3">
                     <Label htmlFor="date">Date</Label>
@@ -263,7 +226,7 @@ const TaxTransactionForm = () => {
                       )}
                     />
                   </div>
-                  <div className="grid space-y-3">
+                  <div className="w-full grid space-y-3">
                     <Label htmlFor="category">Category</Label>
                     <FormField
                       control={form.control}
@@ -322,7 +285,6 @@ const TaxTransactionForm = () => {
                     />
                   </div>
                 </div>
-
                 <div className="flex gap-20 sm:gap-3">
                   <div className="grid space-y-3">
                     <Label htmlFor="amount">Billing Amount</Label>
@@ -344,6 +306,50 @@ const TaxTransactionForm = () => {
                       )}
                     />
                   </div>
+                  <div className="flex gap-3">
+                    <div className="grid space-y-3">
+                      <Label htmlFor="amount">TPS (GST)</Label>
+                      <FormField
+                        control={form.control}
+                        name="tps"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormMessage className="-mt-2 text-[13.5px]"></FormMessage>
+                            <FormControl>
+                              <Input
+                                id="amount"
+                                placeholder="Amount"
+                                className="w-[190px] sm:w-[100px]"
+                                {...field}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="grid space-y-3">
+                      <Label htmlFor="amount">TVQ (QST)</Label>
+                      <FormField
+                        control={form.control}
+                        name="tvq"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormMessage className="-mt-2 text-[13.5px]"></FormMessage>
+                            <FormControl>
+                              <Input
+                                id="amount"
+                                placeholder="Amount"
+                                className="w-[190px] sm:w-[100px]"
+                                {...field}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-20 sm:gap-3">
                   <div className="grid space-y-3">
                     <Label htmlFor="merchant_name">Merchant Name</Label>
                     <FormField
@@ -356,9 +362,61 @@ const TaxTransactionForm = () => {
                             <Input
                               id="merchant_name"
                               placeholder="Merchant Name"
-                              className="w-[386px] sm:w-[150px]"
+                              className="w-[280px] sm:w-[180px]"
                               {...field}
                             />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="w-full grid space-y-3">
+                    <Label htmlFor="project">Project</Label>
+                    <FormField
+                      control={form.control}
+                      name="project"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormMessage className="-mt-2 text-[13.5px]"></FormMessage>
+                          <FormControl>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger
+                                asChild
+                                className="w-full h-full xsm:w-11/12 overflow-hidden"
+                              >
+                                <Button variant="outline">
+                                  {field.value ? (
+                                    field.value
+                                  ) : (
+                                    <span>Choose a project</span>
+                                  )}
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent className="w-full h-full break-all">
+                                <DropdownMenuLabel>
+                                  Choose a project
+                                </DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuRadioGroup
+                                  value={field.value}
+                                  onValueChange={field.onChange}
+                                  className="w-[400px] text-center"
+                                >
+                                  <DropdownMenuRadioItem value="CAM1">
+                                    CAM1
+                                  </DropdownMenuRadioItem>
+                                  <DropdownMenuRadioItem value="CAM2">
+                                    CAM2
+                                  </DropdownMenuRadioItem>
+                                  <DropdownMenuRadioItem value="PCAM">
+                                    PCAM
+                                  </DropdownMenuRadioItem>
+                                  <DropdownMenuRadioItem value="N/A">
+                                    N/A
+                                  </DropdownMenuRadioItem>
+                                </DropdownMenuRadioGroup>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           </FormControl>
                         </FormItem>
                       )}

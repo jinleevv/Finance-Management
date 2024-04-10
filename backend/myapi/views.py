@@ -93,9 +93,11 @@ class CardTransactionUpload(APIView):
     def post(self, request):
         data = request.data
         try:
-            transaction = TaxTransactionForm.objects.create_transaction(
+            TaxTransactionForm.objects.create_transaction(
                 trans_date=data['date'],
                 billing_amount=float(data['billing_amount']),
+                tps=float(data['tps']),
+                tvq=float(data['tvq']),
                 merchant_name=data['merchant_name'],
                 category=data['category'],
                 purpose=data['purpose'],

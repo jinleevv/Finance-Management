@@ -57,14 +57,18 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
 
 
 class TaxTransactionFormManager(models.Manager):
-    def create_transaction(self, trans_date, billing_amount, merchant_name, category, purpose, img, full_name, project, attendees):
-        transaction = self.create(trans_date=trans_date, billing_amount=billing_amount, merchant_name=merchant_name, category=category, purpose=purpose,img=img, full_name=full_name, project=project, attendees=attendees)
+    def create_transaction(self, trans_date, billing_amount, tps, tvq, merchant_name, category, purpose, img, full_name, project, attendees):
+        transaction = self.create(trans_date=trans_date, billing_amount=billing_amount, tps=tps, tvq=tvq,
+                                merchant_name=merchant_name, category=category, purpose=purpose,img=img,
+                                full_name=full_name, project=project, attendees=attendees)
 
         return transaction
 
 class TaxTransactionForm(models.Model):
     trans_date = models.DateField()
-    billing_amount = models.FloatField()
+    billing_amount = models.FloatField(default=0.0)
+    tps = models.FloatField(default=0.0)
+    tvq = models.FloatField(default=0.0)
     merchant_name = models.CharField(max_length=100)
     category = models.CharField(max_length=100)
     purpose = models.CharField(max_length=1000)
@@ -76,8 +80,10 @@ class TaxTransactionForm(models.Model):
     objects = TaxTransactionFormManager()
 
     @classmethod
-    def create(cls, trans_date, billing_amount, merchant_name, category, purpose, img, full_name, project, attendees):
-        transaction = cls(trans_date=trans_date, billing_amount=billing_amount, merchant_name=merchant_name, category=category, purpose=purpose,img=img, full_name=full_name, project=project, attendees=attendees)
+    def create(cls, trans_date, billing_amount, tps, tvq, merchant_name, category, purpose, img, full_name, project, attendees):
+        transaction = cls(trans_date=trans_date, billing_amount=billing_amount, tps=tps, tvq=tvq,
+                        merchant_name=merchant_name, category=category, purpose=purpose,img=img,
+                        full_name=full_name, project=project, attendees=attendees)
         return transaction
 
     class Meta:
