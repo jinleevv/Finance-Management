@@ -9,3 +9,5 @@ myapi/migrations
 venv
 
 .env
+
+db.sqlite3
