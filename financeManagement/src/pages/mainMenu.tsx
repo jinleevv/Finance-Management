@@ -15,7 +15,14 @@ import { useHooks } from "@/hooks";
 
 const MainPage = () => {
   const navigate = useNavigate();
-  const { clientII, department, setTableData } = useHooks();
+  const {
+    clientII,
+    department,
+    setTableData,
+    setMissingTableData,
+    setMissingBankTableData,
+    setMatchingTableData,
+  } = useHooks();
 
   function handleTransactionFrom() {
     navigate("/main/tax-transaction-form");
@@ -33,7 +40,16 @@ const MainPage = () => {
     navigate("/main/view-uploaded-transactions");
   }
 
-  function handleMissingTransactions() {
+  async function handleMissingTransactions() {
+    await clientII.get("/api/missing-transaction-lists/").then((res) => {
+      setMissingTableData(res.data);
+    });
+    await clientII.get("/api/missing-bank-transaction-lists/").then((res) => {
+      setMissingBankTableData(res.data);
+    });
+    await clientII.get("/api/matching-transaction-lists/").then((res) => {
+      setMatchingTableData(res.data);
+    });
     navigate("/main/missing-transactions");
   }
 
@@ -124,7 +140,7 @@ const MainPage = () => {
               <li className="row-span-3">
                 <Button
                   variant="ghost"
-                  className="flex h-full w-full text-center select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-lg hover:shadow-lg"
+                  className="flex h-full w-full items-start select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-lg hover:shadow-lg"
                   onClick={handleMissingTransactions}
                 >
                   <div className="mb-2 mt-4 ml-4 text-lg font-medium">
@@ -138,7 +154,7 @@ const MainPage = () => {
               <li className="row-span-3">
                 <Button
                   variant="ghost"
-                  className="flex h-full w-full text-center select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-lg hover:shadow-lg"
+                  className="flex h-full w-full items-start select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-lg hover:shadow-lg"
                   onClick={handleFinanceDepartment}
                 >
                   <div className="mb-2 mt-4 ml-4 text-lg font-medium">

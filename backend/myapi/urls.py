@@ -15,4 +15,7 @@ urlpatterns = [
     path('delete-card-data/', views.DeleteCardTransactions.as_view(), name='delete-card-data'),
     path('delete-bank-data/', views.DeleteBankTransactions.as_view(), name='delete-bank-data'),
     path('download/uploads/<str:filename>/', views.DownloadReciptImages.as_view(), name='download_file'),
+    path('missing-transaction-lists/', views.MyMissingTransactionLists.as_view(), name='my-missing-transaction-lists'),
+    path('missing-bank-transaction-lists/', views.MyMissingBankTransactionLists.as_view(), name='my-missing-bank-transaction-lists'),
+    path('matching-transaction-lists/', views.MyMatchingTransactionLists.as_view(), name='my-missing-bank-transaction-lists'),
 ]

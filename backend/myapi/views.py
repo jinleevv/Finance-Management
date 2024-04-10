@@ -101,7 +101,8 @@ class CardTransactionUpload(APIView):
                 merchant_name=data['merchant_name'],
                 category=data['category'],
                 purpose=data['purpose'],
-                full_name=data['full_name'],
+                first_name=data['first_name'].upper(),
+                last_name=data['last_name'].upper(),
                 img=data['file'],
                 project=data['project'],
                 attendees=data['attendees'],
@@ -119,9 +120,8 @@ class CardTransactionHistory(APIView):
 
         first_name = serializer.data['first_name']
         last_name = serializer.data['last_name']
-        full_name = first_name + " " + last_name
 
-        my_data = TaxTransactionForm.objects.filter(full_name=full_name.upper())
+        my_data = TaxTransactionForm.objects.filter(first_name=first_name.upper(), last_name=last_name.upper())
         data_list = list(my_data.values())
         
         return JsonResponse(data_list, safe=False)
@@ -142,8 +142,8 @@ class DownloadTransactions(APIView):
             transactions = TaxTransactionForm.objects.filter(trans_date__range=(date_from, date_to))
             bank_lists = BankTransactionList.objects.filter(trans_date__range=(date_from, date_to))
 
-            transactions_set = set((obj.billing_amount, obj.trans_date, obj.full_name) for obj in transactions)
-            bank_lists_set = set((obj.billing_amount, obj.trans_date, (obj.first_name + " " + obj.last_name).upper()) for obj in bank_lists)
+            transactions_set = set((obj.billing_amount, obj.trans_date, (obj.first_name + " " + obj.last_name)) for obj in transactions)
+            bank_lists_set = set((obj.billing_amount, obj.trans_date, (obj.first_name + " " + obj.last_name)) for obj in bank_lists)
 
             common_elements = transactions_set.intersection(bank_lists_set)
             
@@ -157,7 +157,8 @@ class DownloadTransactions(APIView):
             common_transaction_lists = TaxTransactionForm.objects.filter(
                 billing_amount__in=[amount for amount, date, name in common_elements],
                 trans_date__in=[date for amount, date, name in common_elements],
-                full_name__in = [name for amount, date, name in common_elements],
+                first_name__in = [name.split(" ")[0] for amount, date, name in common_elements],
+                last_name__in = [name.split(" ")[1] for amount, date, name in common_elements],
             )
 
             common_data = []
@@ -190,15 +191,15 @@ class DownloadTransactions(APIView):
                     'Post Date': obj2.post_date,
                     'Merchant Name': obj1.merchant_name,
                     'Billing Amount': obj1.billing_amount,
-                    'TPS(GST)': obj1.billing_amount * 0.05,
-                    'TVQ(QST)': obj1.billing_amount * 0.09975,
+                    'TPS(GST)': obj1.tps,
+                    'TVQ(QST)': obj1.tvq,
                     'Taxable Amount': obj1.billing_amount - (obj1.billing_amount * 0.05 + obj1.billing_amount * 0.09975),
                     'Purpose': obj1.purpose,
                     'Category': obj1.category,
                     'Account': account,
                     'Project': obj1.project,
                     'Attendees:': obj1.attendees,
-                    'Full Name': obj1.full_name,
+                    'Full Name': obj1.first_name + " " + obj1.last_name,
                 }
                 
                 common_data.append(obj_dict)
@@ -224,13 +225,13 @@ class BankTransactionLists(APIView):
         try:
             if len(trans_date_strings) == len(post_date_strings) == len(amt_strings) == len(merchant_strings) == len(first_name_strings) == len(last_name_strings):
                 for i in range(len(trans_date_strings)):
-                    transaction = BankTransactionList.objects.create_transaction(
+                    BankTransactionList.objects.create_transaction(
                     trans_date=datetime.strptime(trans_date_strings[i], "%m/%d/%y"),
                     post_date=datetime.strptime(post_date_strings[i], "%m/%d/%y"),
                     billing_amount=float(amt_strings[i]),
                     merchant_name=merchant_strings[i],
-                    first_name=first_name_strings[i],
-                    last_name=last_name_strings[i]
+                    first_name=first_name_strings[i].upper(),
+                    last_name=last_name_strings[i].upper(),
                 )
                 
                 return Response({'message': "Successfully uploaded the information" }, status=status.HTTP_200_OK)
@@ -259,9 +260,10 @@ class DeleteCardTransactions(APIView):
                 merchant_name = data[i]['original']['merchant_name']
                 category = data[i]['original']['category']
                 purpose = data[i]['original']['purpose']
-                full_name = data[i]['original']['full_name']
+                first_name = data[i]['original']['first_name']
+                last_name = data[i]['original']['last_name']
 
-                rows = TaxTransactionForm.objects.filter(trans_date=trans_date, billing_amount=billing_amount, merchant_name=merchant_name, category=category, purpose=purpose, full_name=full_name)
+                rows = TaxTransactionForm.objects.filter(trans_date=trans_date, billing_amount=billing_amount, merchant_name=merchant_name, category=category, purpose=purpose, first_name=first_name, last_name=last_name)
                 
                 file_path = 'media/' + rows.values()[0]['img']
                 if os.path.exists(file_path):
@@ -312,3 +314,70 @@ class DownloadReciptImages(APIView):
         else:
             # If file does not exist, return a 400 bad request status
             return HttpResponse('File not found', status=status.HTTP_400_BAD_REQUEST)
+        
+class MyMissingTransactionLists(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = (SessionAuthentication,)
+    def get(self, request):
+        my_transactions = TaxTransactionForm.objects.all()
+
+        data_not_in_bank = my_transactions.exclude(
+            trans_date__in=BankTransactionList.objects.values_list('trans_date', flat=True),
+            billing_amount__in=BankTransactionList.objects.values_list('billing_amount', flat=True),
+            first_name__in=BankTransactionList.objects.values_list('first_name', flat=True),
+            last_name__in=BankTransactionList.objects.values_list('last_name', flat=True),
+        )
+
+        missingTransactionLists = list(data_not_in_bank.values())
+
+        return JsonResponse(missingTransactionLists, safe=False)
+    
+class MyMissingBankTransactionLists(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = (SessionAuthentication,)
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+
+        first_name = serializer.data['first_name']
+        last_name = serializer.data['last_name']
+
+        bank_transactions = BankTransactionList.objects.filter(first_name=first_name.upper(), last_name=last_name.upper())
+        print(bank_transactions.all())
+        data_not_in_transaction = bank_transactions.exclude(
+            trans_date__in=TaxTransactionForm.objects.values_list('trans_date', flat=True),
+            billing_amount__in=TaxTransactionForm.objects.values_list('billing_amount', flat=True),
+            first_name__in=TaxTransactionForm.objects.values_list('first_name', flat=True),
+            last_name__in=TaxTransactionForm.objects.values_list('last_name', flat=True),
+        )
+
+        missingBankTransactionLists = list(data_not_in_transaction.values())
+
+        return JsonResponse(missingBankTransactionLists, safe=False)
+    
+class MyMatchingTransactionLists(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = (SessionAuthentication,)
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+
+        first_name = serializer.data['first_name']
+        last_name = serializer.data['last_name']
+
+        transactions = TaxTransactionForm.objects.all()
+        bank_lists = BankTransactionList.objects.filter(first_name=first_name.upper(), last_name=last_name.upper())
+        
+        transactions_set = set((obj.billing_amount, obj.trans_date, (obj.first_name + " " + obj.last_name)) for obj in transactions)
+        bank_lists_set = set((obj.billing_amount, obj.trans_date, (obj.first_name + " " + obj.last_name)) for obj in bank_lists)
+
+        common_elements = transactions_set.intersection(bank_lists_set)
+        print(common_elements)
+        common_transaction_lists = TaxTransactionForm.objects.filter(
+                billing_amount__in=[amount for amount, date, name in common_elements],
+                trans_date__in=[date for amount, date, name in common_elements],
+                first_name__in = [name.split(" ")[0] for amount, date, name in common_elements],
+                last_name__in = [name.split(" ")[1] for amount, date, name in common_elements],
+            )
+        
+        matching_data = list(common_transaction_lists.values())
+
+        return JsonResponse(matching_data, safe=False)

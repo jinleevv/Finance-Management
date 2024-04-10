@@ -74,7 +74,7 @@ export function DataTable<TData, TValue>({
             setTableData(res.data);
           })
           .catch(() => {
-            toast("Unable to reload the card transaction history")
+            toast("Unable to reload the card transaction history");
           });
       })
       .catch(() => toast("Unable to delete the data"));
