@@ -57,10 +57,10 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
 
 
 class TaxTransactionFormManager(models.Manager):
-    def create_transaction(self, trans_date, billing_amount, tps, tvq, merchant_name, category, purpose, img, full_name, project, attendees):
+    def create_transaction(self, trans_date, billing_amount, tps, tvq, merchant_name, category, purpose, img, first_name, last_name, project, attendees):
         transaction = self.create(trans_date=trans_date, billing_amount=billing_amount, tps=tps, tvq=tvq,
                                 merchant_name=merchant_name, category=category, purpose=purpose,img=img,
-                                full_name=full_name, project=project, attendees=attendees)
+                                first_name=first_name, last_name=last_name, project=project, attendees=attendees)
 
         return transaction
 
@@ -73,17 +73,18 @@ class TaxTransactionForm(models.Model):
     category = models.CharField(max_length=100)
     purpose = models.CharField(max_length=1000)
     img = models.ImageField(upload_to="uploads/", null=True, blank=True)
-    full_name = models.CharField(max_length=100, default="")
+    first_name = models.CharField(max_length=100, default="")
+    last_name = models.CharField(max_length=100, default="")
     project = models.CharField(max_length=50, default="")
     attendees = models.CharField(max_length=100, default="")
 
     objects = TaxTransactionFormManager()
 
     @classmethod
-    def create(cls, trans_date, billing_amount, tps, tvq, merchant_name, category, purpose, img, full_name, project, attendees):
+    def create(cls, trans_date, billing_amount, tps, tvq, merchant_name, category, purpose, img, first_name, last_name, project, attendees):
         transaction = cls(trans_date=trans_date, billing_amount=billing_amount, tps=tps, tvq=tvq,
                         merchant_name=merchant_name, category=category, purpose=purpose,img=img,
-                        full_name=full_name, project=project, attendees=attendees)
+                        first_name=first_name, last_name=last_name, project=project, attendees=attendees)
         return transaction
 
     class Meta:
@@ -101,8 +102,8 @@ class BankTransactionList(models.Model):
     post_date = models.DateField()
     billing_amount = models.FloatField()
     merchant_name = models.CharField(max_length=100)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
 
     objects = BankTransactionListManager()
 

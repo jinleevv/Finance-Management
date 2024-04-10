@@ -34,7 +34,7 @@ const Navbar = () => {
     clientII
       .get("/api/sessionid-exist/")
       .then((res) => {
-        if(res.status === 204) {
+        if (res.status === 204) {
           toast(
             "Please log in to the website. Either your session is expired or you are not logged in",
             { id: 1 }
@@ -58,10 +58,7 @@ const Navbar = () => {
       })
       .catch(() => {
         setLogedInUser(false);
-        toast(
-          "Something went wrong",
-          { id: 1 }
-        );
+        toast("Something went wrong", { id: 1 });
       });
   });
 

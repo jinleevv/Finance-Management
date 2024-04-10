@@ -107,6 +107,7 @@ const TaxTransactionForm = () => {
         "__" +
         values.merchant_name +
         ".png";
+      const [firstName, lastName] = userName.split(" ");
 
       let data = new FormData();
       data.append("date", values.date.toISOString().split("T")[0]);
@@ -116,7 +117,8 @@ const TaxTransactionForm = () => {
       data.append("tvq", values.tvq);
       data.append("merchant_name", values.merchant_name);
       data.append("purpose", values.purpose);
-      data.append("full_name", userName.toUpperCase());
+      data.append("first_name", firstName);
+      data.append("last_name", lastName);
       data.append("category", values.category);
       data.append("attendees", values.attendees);
       data.append("project", values.project);
