@@ -18,4 +18,5 @@ urlpatterns = [
     path('missing-transaction-lists/', views.MyMissingTransactionLists.as_view(), name='my-missing-transaction-lists'),
     path('missing-bank-transaction-lists/', views.MyMissingBankTransactionLists.as_view(), name='my-missing-bank-transaction-lists'),
     path('matching-transaction-lists/', views.MyMatchingTransactionLists.as_view(), name='my-missing-bank-transaction-lists'),
+    path('filter-by-dates/', views.FilterByDates.as_view(), name='filter-by-dates'),
 ]
