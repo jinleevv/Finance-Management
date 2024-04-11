@@ -19,7 +19,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Input } from "@/components/ui/input";
 
 interface DataTableProps<TableData, TValue> {
   columns: ColumnDef<TableData, TValue>[];
@@ -54,21 +53,9 @@ export function MyMissingDataTable<TData, TValue>({
 
   return (
     <>
-      <div className="flex items-center py-4 justify-between">
-        <Input
-          placeholder="Filter by First Name..."
-          value={
-            (table.getColumn("first_name")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table.getColumn("first_name")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-      </div>
       <div className="flex first-line:rounded-md border">
         <Table>
-          <ScrollArea className="w-full h-[300px] sm:h-[350px] xsm:h-[330px]">
+          <ScrollArea className="w-full h-[378px] sm:h-[350px] xsm:h-[330px]">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>

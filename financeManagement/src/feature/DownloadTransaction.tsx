@@ -83,7 +83,7 @@ export function DownloadTransaction({
   }
 
   return (
-    <Card className="w-[500px] sm:w-full m-auto mt-24 sm:mt-0 opacity-90 sm:opacity-85">
+    <Card className="w-[500px] sm:w-full xsm:w-full m-auto mt-24 sm:mt-0 xsm:mt-0 opacity-90 sm:opacity-85">
       <CardHeader>
         <div className="flex justify-between">
           <CardTitle>Download Transaction List</CardTitle>
@@ -101,7 +101,7 @@ export function DownloadTransaction({
                 id="date"
                 variant={"outline"}
                 className={cn(
-                  "w-[430px] sm:w-full h-full justify-start text-left font-normal",
+                  "w-[430px] sm:w-full xsm:w-full h-full justify-start text-left font-normal",
                   !date && "text-muted-foreground"
                 )}
               >
@@ -136,7 +136,10 @@ export function DownloadTransaction({
           <Button variant="outline" onClick={handleCancel}>
             Cancel
           </Button>
-          <Button onClick={handleClick} className="lg:-mr-7 sm:-mr-12">
+          <Button
+            onClick={handleClick}
+            className="lg:-mr-7 sm:-mr-12 xsm:-mr-12"
+          >
             Download
           </Button>
         </CardFooter>

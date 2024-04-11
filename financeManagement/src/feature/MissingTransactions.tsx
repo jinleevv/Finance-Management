@@ -20,8 +20,8 @@ const ViewMissingTransactions = () => {
 
   return (
     <>
-      <div className="flex w-full">
-        <div className="w-1/2 h-5/6">
+      <div className="lg:flex w-full">
+        <div className="lg:w-1/2 h-5/6">
           <Card className="h-full m-auto mt-1 opacity-90">
             <CardContent className="mt-5">
               <div className="lg:flex sm:grid w-full">
@@ -30,7 +30,7 @@ const ViewMissingTransactions = () => {
                 </Button>
                 <div className="m-auto">
                   <Label className="lg:text-lg sm:text-base font-bold">
-                    Missing Transaction Lists
+                    Remaining Items (Your List)
                   </Label>
                 </div>
               </div>
@@ -38,17 +38,24 @@ const ViewMissingTransactions = () => {
             </CardContent>
           </Card>
         </div>
-        <div className="w-1/2 h-5/6">
+        <div className="lg:w-1/2 h-5/6">
           <Card className="h-full m-auto mt-1 opacity-90">
             <CardContent className="mt-5">
               <div className="lg:flex sm:grid w-full">
                 <Button variant="outline" onClick={handleCancel} size="sm">
                   <ArrowLeftIcon />
                 </Button>
-                <div className="m-auto">
-                  <Label className="lg:text-lg sm:text-base font-bold">
-                    Missing Bank Transaction Lists
-                  </Label>
+                <div className="w-full">
+                  <div className="w-full text-center">
+                    <Label className="lg:text-lg sm:text-base font-bold">
+                      Remaining Items (Bank)
+                    </Label>
+                  </div>
+                  <div className="text-center -mt-2">
+                    <Label className="text-sm font-bold text-red-600">
+                      Must be cleared
+                    </Label>
+                  </div>
                 </div>
               </div>
               <MyMissingBankDataTable
@@ -63,12 +70,9 @@ const ViewMissingTransactions = () => {
         <Card className="h-full m-auto mt-1 opacity-90">
           <CardContent className="mt-5">
             <div className="lg:flex sm:grid w-full">
-              <Button variant="outline" onClick={handleCancel} size="sm">
-                <ArrowLeftIcon />
-              </Button>
               <div className="m-auto">
                 <Label className="lg:text-lg sm:text-base font-bold">
-                  Matching Transaction Lists
+                  Matched Transactions
                 </Label>
               </div>
             </div>

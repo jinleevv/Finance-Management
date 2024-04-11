@@ -143,7 +143,7 @@ const MainPage = () => {
                   className="flex h-full w-full items-start select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-lg hover:shadow-lg"
                   onClick={handleMissingTransactions}
                 >
-                  <div className="mb-2 mt-4 ml-4 text-lg font-medium">
+                  <div className="mb-2 mt-4 ml-4 text-lg font-medium text-left">
                     Missing Transactions
                     <p className="text-sm leading-tight text-muted-foreground">
                       Missing Transactions
@@ -157,7 +157,7 @@ const MainPage = () => {
                   className="flex h-full w-full items-start select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-lg hover:shadow-lg"
                   onClick={handleFinanceDepartment}
                 >
-                  <div className="mb-2 mt-4 ml-4 text-lg font-medium">
+                  <div className="mb-2 mt-4 ml-4 text-lg font-medium text-left">
                     Finance Department
                     <p className="text-sm leading-tight text-muted-foreground">
                       Finance Department

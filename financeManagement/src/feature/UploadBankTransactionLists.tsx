@@ -95,7 +95,7 @@ const UploadBankTransactionLists = () => {
   }
 
   return (
-    <Card className="w-[800px] sm:w-full m-auto mt-20 sm:mt-0 opacity-90 sm:opacity-85">
+    <Card className="w-[800px] sm:w-full xsm:w-full m-auto mt-20 sm:mt-0 xsm:mt-0 opacity-90 sm:opacity-85">
       <CardHeader>
         <div className="flex justify-between">
           <CardTitle>Upload Bank Transaction Lists</CardTitle>
@@ -124,7 +124,7 @@ const UploadBankTransactionLists = () => {
                             <Textarea
                               id="trans_date"
                               placeholder="Trans Date"
-                              className="w-[335px]"
+                              className="w-[335px] sm:w-full xsm:w-full"
                               {...field}
                             />
                           </FormControl>
@@ -144,7 +144,7 @@ const UploadBankTransactionLists = () => {
                               id="post_date"
                               placeholder="Post Date"
                               {...field}
-                              className="w-[335px]"
+                              className="w-[335px] sm:w-full xsm:w-full"
                             />
                           </FormControl>
                         </FormItem>
@@ -164,7 +164,7 @@ const UploadBankTransactionLists = () => {
                             <Textarea
                               id="billing_amount"
                               placeholder="Billing Amount"
-                              className="w-[335px]"
+                              className="w-[335px] sm:w-full xsm:w-full"
                               {...field}
                             />
                           </FormControl>
@@ -183,7 +183,7 @@ const UploadBankTransactionLists = () => {
                             <Textarea
                               id="merchant_name"
                               placeholder="Merchant Name"
-                              className="w-[335px]"
+                              className="w-[335px] sm:w-full xsm:w-full"
                               {...field}
                             />
                           </FormControl>
@@ -204,7 +204,7 @@ const UploadBankTransactionLists = () => {
                             <Textarea
                               id="first_name"
                               placeholder="First Name"
-                              className="w-[335px]"
+                              className="w-[335px] sm:w-full xsm:w-full"
                               {...field}
                             />
                           </FormControl>
@@ -223,7 +223,7 @@ const UploadBankTransactionLists = () => {
                             <Textarea
                               id="last_name"
                               placeholder="Last Name"
-                              className="w-[335px]"
+                              className="w-[335px] sm:w-full xsm:w-full"
                               {...field}
                             />
                           </FormControl>

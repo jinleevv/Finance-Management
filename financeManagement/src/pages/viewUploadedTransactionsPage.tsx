@@ -18,7 +18,7 @@ const ViewUploadedTransactionsPage = () => {
   return (
     <div className="w-full h-full">
       <Navbar />
-      <Card className="lg:w-[950px] sm:w-full m-auto lg:mt-24 sm:mt-5 opacity-90">
+      <Card className="lg:w-[950px] sm:w-full xsm:w-full m-auto lg:mt-24 sm:mt-0 xsm:mt-0 opacity-90">
         <CardContent className="mt-5">
           <Button variant="outline" onClick={handleCancel} size="sm">
             <ArrowLeftIcon />

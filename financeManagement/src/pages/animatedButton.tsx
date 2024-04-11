@@ -18,7 +18,11 @@ const wheel = (y: number) => {
   return `translateY(${-imgHeight * (y < 0 ? 6 : 1) - (y % (imgHeight * 5))}px`;
 };
 
-const AnimatedButton = ({ title, description, handleFunc }: AnimatedButtonProps) => {
+const AnimatedButton = ({
+  title,
+  description,
+  handleFunc,
+}: AnimatedButtonProps) => {
   useEffect(() => {
     const preventDefault = (e: Event) => e.preventDefault();
     document.addEventListener("gesturestart", preventDefault);
@@ -80,7 +84,7 @@ const AnimatedButton = ({ title, description, handleFunc }: AnimatedButtonProps)
       }}
     >
       <Button
-        className="flex h-full w-full items-center text-xl text-black select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-lg hover:shadow-lg"
+        className="flex h-full w-full items-start text-black select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-lg hover:shadow-lg"
         onClick={handleFunc}
       >
         <div className="mb-2 mt-4 ml-4 text-lg font-medium text-left">

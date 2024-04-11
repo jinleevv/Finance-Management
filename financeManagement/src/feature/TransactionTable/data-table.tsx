@@ -22,9 +22,18 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useHooks } from "@/hooks";
 import axios from "axios";
+import { addDays, format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { DateRange } from "react-day-picker";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface DataTableProps<TableData, TValue> {
   columns: ColumnDef<TableData, TValue>[];
@@ -41,6 +50,10 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+  const [date, setDate] = React.useState<DateRange | undefined>({
+    from: new Date(),
+    to: addDays(new Date(), 3),
+  });
 
   const table = useReactTable({
     data,
@@ -80,6 +93,33 @@ export function DataTable<TData, TValue>({
       .catch(() => toast("Unable to delete the data"));
   }
 
+  async function handleFilterByDates() {
+    const data = JSON.stringify({
+      date_from: date.from.toISOString().split("T")[0],
+      date_to: date.to.toISOString().split("T")[0],
+    });
+    await clientI
+      .post("/api/filter-by-dates/", data, {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => {
+        setTableData(res.data);
+      });
+  }
+
+  async function handleReset() {
+    await clientII
+      .get("/api/card-transaction-history/", {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => {
+        setTableData(res.data);
+      })
+      .catch(() => {
+        toast("Unable to reload the card transaction history");
+      });
+  }
+
   async function handleDownloadImage() {
     const data = table.getFilteredSelectedRowModel().rows;
     data.forEach((element) => {
@@ -115,23 +155,63 @@ export function DataTable<TData, TValue>({
   return (
     <>
       <div className="flex items-center py-4 justify-between">
-        <Input
-          placeholder="Filter Merchant Name..."
-          value={
-            (table.getColumn("merchant_name")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table.getColumn("merchant_name")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <div className="flex gap-3">
-          <Button variant="outline" onClick={handleDownloadImage}>
-            Download Images
-          </Button>
-          <Button variant="outline" onClick={handleDelete}>
-            Delete
-          </Button>
+        <div className="lg:flex sm:grid gap-2">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                id="date"
+                variant={"outline"}
+                className={cn(
+                  "w-[300px] justify-start text-left font-normal",
+                  !date && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {date?.from ? (
+                  date.to ? (
+                    <>
+                      {format(date.from, "LLL dd, y")} -{" "}
+                      {format(date.to, "LLL dd, y")}
+                    </>
+                  ) : (
+                    format(date.from, "LLL dd, y")
+                  )
+                ) : (
+                  <span>Pick a date</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                initialFocus
+                mode="range"
+                defaultMonth={date?.from}
+                selected={date}
+                onSelect={setDate}
+                numberOfMonths={1}
+              />
+            </PopoverContent>
+          </Popover>
+          <div className="sm:flex xsm:flex sm:gap-2 xsm:gap-2">
+            <div>
+              <Button onClick={handleFilterByDates}>Filter by dates</Button>
+            </div>
+            <div>
+              <Button onClick={handleReset} variant="outline">
+                Reset
+              </Button>
+            </div>
+          </div>
+          <div className="lg:flex sm:grid xsm:grid sm:gap-3 xsm:gap-3">
+            <div className="sm:flex xsm:flex sm:gap-3 xsm:gap-3">
+              <Button variant="outline" onClick={handleDownloadImage}>
+                Download Images
+              </Button>
+              <Button variant="outline" onClick={handleDelete}>
+                Delete
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
       <div className="flex first-line:rounded-md border">

@@ -151,7 +151,7 @@ const TaxTransactionForm = () => {
   }
 
   return (
-    <Card className="w-[800px] sm:w-full m-auto mt-20 sm:mt-0 opacity-90 sm:opacity-85">
+    <Card className="w-[800px] sm:w-full xsm:w-full m-auto mt-20 sm:mt-0 xsm:mt-0 opacity-90 sm:opacity-85">
       <CardHeader>
         <div className="flex justify-between gap-4">
           <CardTitle>Corporate Card Transaction Form</CardTitle>
@@ -177,7 +177,7 @@ const TaxTransactionForm = () => {
                       <FormMessage className="-mt-2 text-[13.5px]"></FormMessage>
                       <FormControl>
                         <Input
-                          className="w-full xsm:w-11/12"
+                          className="w-full sm:w-full xsm:w-full"
                           id="file"
                           type="file"
                           {...fileRef}
@@ -187,7 +187,7 @@ const TaxTransactionForm = () => {
                   )}
                 />
 
-                <div className="flex gap-20 sm:gap-3">
+                <div className="flex gap-20 sm:gap-3 xsm:gap-3">
                   <div className="grid space-y-3">
                     <Label htmlFor="date">Date</Label>
                     <FormField
@@ -202,7 +202,7 @@ const TaxTransactionForm = () => {
                                 <Button
                                   variant={"outline"}
                                   className={cn(
-                                    "w-[280px] sm:w-[180px] justify-start text-left font-normal",
+                                    "w-[280px] sm:w-[180px] xsm:w-[150px] justify-start text-left font-normal",
                                     !field.value && "text-muted-foreground"
                                   )}
                                 >
@@ -240,7 +240,7 @@ const TaxTransactionForm = () => {
                             <DropdownMenu>
                               <DropdownMenuTrigger
                                 asChild
-                                className="w-full h-full sm:w-[150px] overflow-hidden"
+                                className="w-full h-full xsm:w-full overflow-hidden"
                               >
                                 <Button variant="outline">
                                   {field.value ? (
@@ -287,7 +287,7 @@ const TaxTransactionForm = () => {
                     />
                   </div>
                 </div>
-                <div className="flex gap-20 sm:gap-3">
+                <div className="flex gap-20 sm:gap-3 xsm:gap-3">
                   <div className="grid space-y-3">
                     <Label htmlFor="amount">Billing Amount</Label>
                     <FormField
@@ -300,7 +300,7 @@ const TaxTransactionForm = () => {
                             <Input
                               id="amount"
                               placeholder="Amount"
-                              className="w-[280px] sm:w-[180px]"
+                              className="w-[280px] sm:w-[180px] xsm:w-[150px]"
                               {...field}
                             />
                           </FormControl>
@@ -309,49 +309,51 @@ const TaxTransactionForm = () => {
                     />
                   </div>
                   <div className="flex gap-3">
-                    <div className="grid space-y-3">
-                      <Label htmlFor="amount">TPS (GST)</Label>
-                      <FormField
-                        control={form.control}
-                        name="tps"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormMessage className="-mt-2 text-[13.5px]"></FormMessage>
-                            <FormControl>
-                              <Input
-                                id="amount"
-                                placeholder="Amount"
-                                className="w-[190px] sm:w-[100px]"
-                                {...field}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div className="grid space-y-3">
-                      <Label htmlFor="amount">TVQ (QST)</Label>
-                      <FormField
-                        control={form.control}
-                        name="tvq"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormMessage className="-mt-2 text-[13.5px]"></FormMessage>
-                            <FormControl>
-                              <Input
-                                id="amount"
-                                placeholder="Amount"
-                                className="w-[190px] sm:w-[100px]"
-                                {...field}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
+                    <div className="flex w-full gap-3 sm:gap-1 xsm:gap-1">
+                      <div className="grid space-y-3">
+                        <Label htmlFor="amount">TPS (GST)</Label>
+                        <FormField
+                          control={form.control}
+                          name="tps"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormMessage className="-mt-2 text-[13.5px]"></FormMessage>
+                              <FormControl>
+                                <Input
+                                  id="amount"
+                                  placeholder="Amount"
+                                  className="w-[190px] sm:w-full xsm:w-full"
+                                  {...field}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div className="grid space-y-3">
+                        <Label htmlFor="amount">TVQ (QST)</Label>
+                        <FormField
+                          control={form.control}
+                          name="tvq"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormMessage className="-mt-2 text-[13.5px]"></FormMessage>
+                              <FormControl>
+                                <Input
+                                  id="amount"
+                                  placeholder="Amount"
+                                  className="w-[190px] sm:w-full xsm:w-full"
+                                  {...field}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="flex gap-20 sm:gap-3">
+                <div className="flex gap-20 sm:gap-3 xsm:gap-3">
                   <div className="grid space-y-3">
                     <Label htmlFor="merchant_name">Merchant Name</Label>
                     <FormField
@@ -364,7 +366,7 @@ const TaxTransactionForm = () => {
                             <Input
                               id="merchant_name"
                               placeholder="Merchant Name"
-                              className="w-[280px] sm:w-[180px]"
+                              className="w-[280px] sm:w-[180px] xsm:w-[150px]"
                               {...field}
                             />
                           </FormControl>
@@ -384,7 +386,7 @@ const TaxTransactionForm = () => {
                             <DropdownMenu>
                               <DropdownMenuTrigger
                                 asChild
-                                className="w-full h-full xsm:w-11/12 overflow-hidden"
+                                className="w-full h-full xsm:w-full overflow-hidden"
                               >
                                 <Button variant="outline">
                                   {field.value ? (
@@ -425,7 +427,7 @@ const TaxTransactionForm = () => {
                     />
                   </div>
                 </div>
-                <div className="flex gap-20 sm:gap-3">
+                <div className="flex gap-20 sm:gap-3 xsm:gap-3">
                   <div className="grid space-y-3">
                     <Label htmlFor="purpose">Purpose of Payment</Label>
                     <FormField
@@ -437,7 +439,7 @@ const TaxTransactionForm = () => {
                           <FormControl>
                             <Textarea
                               placeholder="Please provide the specific purpose of payment"
-                              className="w-[280px] sm:w-[180px]"
+                              className="w-[280px] sm:w-[180px] xsm:w-full"
                               {...field}
                             />
                           </FormControl>
@@ -456,7 +458,7 @@ const TaxTransactionForm = () => {
                           <FormControl>
                             <Textarea
                               placeholder="Attendees"
-                              className="w-[386px] sm:w-[150px]"
+                              className="w-[386px] sm:w-full xsm:w-full"
                               {...field}
                             />
                           </FormControl>
