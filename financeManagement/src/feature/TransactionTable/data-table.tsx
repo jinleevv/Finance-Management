@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -45,12 +45,10 @@ export function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const { clientI, clientII, urlII, setTableData } = useHooks();
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [date, setDate] = React.useState<DateRange | undefined>({
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [rowSelection, setRowSelection] = useState({});
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(),
     to: addDays(new Date(), 3),
   });
@@ -104,6 +102,9 @@ export function DataTable<TData, TValue>({
       })
       .then((res) => {
         setTableData(res.data);
+      })
+      .catch(() => {
+        toast("Unable to filter by given dates");
       });
   }
 
@@ -154,8 +155,8 @@ export function DataTable<TData, TValue>({
   }
   return (
     <>
-      <div className="flex items-center py-4 justify-between">
-        <div className="lg:flex sm:grid gap-2">
+      <div className="lg:flex sm:grid gap-2 justify-between">
+        <div className="lg:flex w-full gap-2 sm:space-y-2 xsm:space-y-2">
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -192,26 +193,20 @@ export function DataTable<TData, TValue>({
               />
             </PopoverContent>
           </Popover>
-          <div className="sm:flex xsm:flex sm:gap-2 xsm:gap-2">
-            <div>
-              <Button onClick={handleFilterByDates}>Filter by dates</Button>
-            </div>
-            <div>
-              <Button onClick={handleReset} variant="outline">
-                Reset
-              </Button>
-            </div>
+          <div className="flex gap-1">
+            <Button onClick={handleFilterByDates}>Filter by dates</Button>
+            <Button onClick={handleReset} variant="outline">
+              Reset
+            </Button>
           </div>
-          <div className="lg:flex sm:grid xsm:grid sm:gap-3 xsm:gap-3">
-            <div className="sm:flex xsm:flex sm:gap-3 xsm:gap-3">
-              <Button variant="outline" onClick={handleDownloadImage}>
-                Download Images
-              </Button>
-              <Button variant="outline" onClick={handleDelete}>
-                Delete
-              </Button>
-            </div>
-          </div>
+        </div>
+        <div className="w-full flex gap-1 lg:justify-end">
+          <Button variant="outline" onClick={handleDownloadImage}>
+            Download Images
+          </Button>
+          <Button variant="outline" onClick={handleDelete}>
+            Delete
+          </Button>
         </div>
       </div>
       <div className="flex first-line:rounded-md border">

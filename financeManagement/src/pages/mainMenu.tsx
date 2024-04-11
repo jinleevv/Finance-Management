@@ -166,64 +166,6 @@ const MainPage = () => {
                 </Button>
               </li>
             </ul>
-            {/* <ul className="w-full grid gap-3 p-6 grid-cols-1 -mt-6">
-              <li className="row-span-3">
-                <Button
-                  variant="ghost"
-                  className="flex h-full w-full text-center select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-lg hover:shadow-lg"
-                  onClick={handleFinanceDepartment}
-                >
-                  <div className="mb-2 mt-4 ml-4 text-lg font-medium">
-                    Finance Department
-                    <p className="text-sm leading-tight text-muted-foreground">
-                      Finance Department
-                    </p>
-                  </div>
-                </Button>
-              </li> */}
-            {/* <li className="row-span-3">
-                <Button
-                  variant="ghost"
-                  className="flex h-full w-full items-start select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-lg hover:shadow-lg"
-                  onClick={handleDownloadLists}
-                >
-                  <div className="mb-2 mt-4 ml-4 text-lg font-medium text-left">
-                    Download Transaction Lists
-                    <p className="text-sm leading-tight text-muted-foreground">
-                      Download the list
-                    </p>
-                  </div>
-                </Button>
-              </li>
-              <li className="row-span-3">
-                <Button
-                  variant="ghost"
-                  className="flex h-full w-full items-start select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-lg hover:shadow-lg"
-                  onClick={handleUploadBankTransactionLists}
-                >
-                  <div className="mb-2 mt-4 ml-4 text-lg font-medium text-left">
-                    Bank Transaction Lists
-                    <p className="text-sm leading-tight text-muted-foreground">
-                      Upload bank transaction lists
-                    </p>
-                  </div>
-                </Button>
-              </li>
-              <li className="row-span-3">
-                <Button
-                  variant="ghost"
-                  className="flex h-full w-full items-start select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-lg hover:shadow-lg"
-                  onClick={handleViewBankTransactionLists}
-                >
-                  <div className="mb-2 mt-4 ml-4 text-lg font-medium text-left">
-                    View Bank Transaction Lists
-                    <p className="text-sm leading-tight text-muted-foreground">
-                      View Bank Transaction Lists
-                    </p>
-                  </div>
-                </Button>
-              </li> */}
-            {/* </ul> */}
             <Toaster richColors closeButton />
           </CardContent>
         </Card>

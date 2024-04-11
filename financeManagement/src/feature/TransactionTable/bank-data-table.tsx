@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -35,11 +35,9 @@ export function BankDataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const { clientI, clientII, setBankTableData } = useHooks();
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [rowSelection, setRowSelection] = useState({});
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const table = useReactTable({
     data,
@@ -73,7 +71,7 @@ export function BankDataTable<TData, TValue>({
             setBankTableData(res.data);
           })
           .catch(() => {
-            toast("Unable to reload the bank transaction lists")
+            toast("Unable to reload the bank transaction lists");
           });
       })
       .catch(() => toast("Unable to delete the data"));

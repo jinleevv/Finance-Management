@@ -72,7 +72,12 @@ export function DownloadTransaction({
               type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
             });
 
-            saveAs(blob, "transactions_list.xlsx");
+            const nameDate = new Date();
+            const fileDownloadName =
+              "Transactions_List_" +
+              nameDate.toISOString().split("T")[0] +
+              ".xlsx";
+            saveAs(blob, fileDownloadName);
           } else {
             toast("There is no data that intersect with each other");
           }

@@ -18,7 +18,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Input } from "@/components/ui/input";
 import { addDays, format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
@@ -80,6 +79,9 @@ export function MyMatchingDataTable<TData, TValue>({
       })
       .then((res) => {
         setMatchingTableData(res.data);
+      })
+      .catch(() => {
+        toast("Unable to filter by given dates");
       });
   }
 
