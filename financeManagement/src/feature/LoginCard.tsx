@@ -122,12 +122,12 @@ export function LoginCard() {
                 />
               </div>
             </div>
-            <div className="mt-2 mb-3 text-sm text-right">
+            {/* <div className="mt-2 mb-3 text-sm text-right">
               Don't have an account?{" "}
               <a href="/signup" className="underline">
                 Sign Up
               </a>
-            </div>
+            </div> */}
             <div className="mt-3 flex justify-between">
               <Button type="submit">Submit</Button>
             </div>

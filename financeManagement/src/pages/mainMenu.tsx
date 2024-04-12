@@ -28,8 +28,8 @@ const MainPage = () => {
     navigate("/main/tax-transaction-form");
   }
 
-  function handleViewUploadedTransactions() {
-    clientII
+  async function handleViewUploadedTransactions() {
+    await clientII
       .get("/api/card-transaction-history/")
       .then((res) => {
         setTableData(res.data);

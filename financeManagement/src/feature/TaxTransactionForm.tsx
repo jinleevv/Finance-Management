@@ -242,7 +242,7 @@ const TaxTransactionForm = () => {
                             <DropdownMenu>
                               <DropdownMenuTrigger
                                 asChild
-                                className="w-full h-full xsm:w-full overflow-hidden"
+                                className="w-full h-full sm:w-[142px] xsm:w-[142px] overflow-hidden"
                               >
                                 <Button variant="outline">
                                   {field.value ? (
@@ -313,7 +313,7 @@ const TaxTransactionForm = () => {
                   <div className="flex gap-3">
                     <div className="flex w-full gap-3 sm:gap-1 xsm:gap-1">
                       <div className="grid space-y-3">
-                        <Label htmlFor="amount">TPS (GST)</Label>
+                        <Label htmlFor="amount">TPS(GST)</Label>
                         <FormField
                           control={form.control}
                           name="tps"
@@ -333,7 +333,7 @@ const TaxTransactionForm = () => {
                         />
                       </div>
                       <div className="grid space-y-3">
-                        <Label htmlFor="amount">TVQ (QST)</Label>
+                        <Label htmlFor="amount">TVQ(QST)</Label>
                         <FormField
                           control={form.control}
                           name="tvq"
