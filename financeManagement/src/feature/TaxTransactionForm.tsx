@@ -107,7 +107,9 @@ const TaxTransactionForm = () => {
         "__" +
         values.merchant_name +
         ".png";
-      const [firstName, lastName] = userName.split(" ");
+      const name = userName.split(" ");
+      const firstName = name.slice(0, -1).join(" ");
+      const lastName = name[name.length - 1];
 
       let data = new FormData();
       data.append("date", values.date.toISOString().split("T")[0]);

@@ -150,7 +150,7 @@ export function DataTable<TData, TValue>({
           link.parentNode.removeChild(link);
           window.URL.revokeObjectURL(url);
         })
-        .catch((error) => console.error("Error downloading file:", error));
+        .catch((err) => toast("Error downloading file: ", err));
     });
   }
   return (

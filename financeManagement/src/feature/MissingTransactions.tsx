@@ -76,7 +76,10 @@ const ViewMissingTransactions = () => {
                 </Label>
               </div>
             </div>
-            <MyMatchingDataTable columns={columns} data={matchingTableData} />
+            <MyMatchingDataTable
+              columns={BankColumns}
+              data={matchingTableData}
+            />
           </CardContent>
         </Card>
       </div>

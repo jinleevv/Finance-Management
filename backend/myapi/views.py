@@ -142,23 +142,23 @@ class DownloadTransactions(APIView):
             transactions = TaxTransactionForm.objects.filter(trans_date__range=(date_from, date_to))
             bank_lists = BankTransactionList.objects.filter(trans_date__range=(date_from, date_to))
 
-            transactions_set = set((obj.billing_amount, obj.trans_date, (obj.first_name + " " + obj.last_name)) for obj in transactions)
-            bank_lists_set = set((obj.billing_amount, obj.trans_date, (obj.first_name + " " + obj.last_name)) for obj in bank_lists)
+            transactions_set = set((obj.billing_amount, obj.trans_date, obj.first_name, obj.last_name) for obj in transactions)
+            bank_lists_set = set((obj.billing_amount, obj.trans_date, obj.first_name, obj.last_name) for obj in bank_lists)
 
             common_elements = transactions_set.intersection(bank_lists_set)
             
             common_bank_lists = BankTransactionList.objects.filter(
-                billing_amount__in=[amount for amount, date, name in common_elements],
-                trans_date__in=[date for amount, date, name in common_elements],
-                first_name__in = [name.split()[0] for amount, date, name in common_elements],
-                last_name__in = [name.split()[-1] for amount, date, name in common_elements],
+                billing_amount__in=[amount for amount, date, first_name, last_name in common_elements],
+                trans_date__in=[date for amount, date, first_name, last_name in common_elements],
+                first_name__in = [first_name for amount, date, first_name, last_name in common_elements],
+                last_name__in = [last_name for amount, date, first_name, last_name in common_elements],
             )
 
             common_transaction_lists = TaxTransactionForm.objects.filter(
-                billing_amount__in=[amount for amount, date, name in common_elements],
-                trans_date__in=[date for amount, date, name in common_elements],
-                first_name__in = [name.split(" ")[0] for amount, date, name in common_elements],
-                last_name__in = [name.split(" ")[1] for amount, date, name in common_elements],
+                billing_amount__in=[amount for amount, date, first_name, last_name in common_elements],
+                trans_date__in=[date for amount, date, first_name, last_name in common_elements],
+                first_name__in = [first_name for amount, date, first_name, last_name in common_elements],
+                last_name__in = [last_name for amount, date, first_name, last_name in common_elements],
             )
 
             common_data = []
@@ -174,6 +174,8 @@ class DownloadTransactions(APIView):
                         account = construction_options[3]
                     elif obj1.category == 'Banking Fees':
                         account = construction_options[4]
+                    else:
+                        account = ""
                 else:
                     if obj1.category == 'Business Trip(Hotel,Food,Gas,Parking,Toll,Trasportation)':
                         account = general_options[0]
@@ -185,6 +187,8 @@ class DownloadTransactions(APIView):
                         account = general_options[3]
                     elif obj1.category == 'Banking Fees':
                         account = general_options[4]
+                    else:
+                        account = ""
 
                 obj_dict = {
                     'Trans Date': obj1.trans_date,
@@ -292,8 +296,10 @@ class DeleteBankTransactions(APIView):
                 first_name = data[i]['original']['first_name']
                 last_name = data[i]['original']['last_name']
 
-                rows = BankTransactionList.objects.filter(trans_date=trans_date, post_date=post_date, billing_amount=billing_amount, merchant_name=merchant_name, first_name=first_name, last_name=last_name)
-                rows.delete()
+                row = BankTransactionList.objects.filter(trans_date=trans_date, post_date=post_date, billing_amount=billing_amount, merchant_name=merchant_name, first_name=first_name, last_name=last_name).first()      
+                
+                if row:
+                    row.delete()
 
             return Response({'message': "Successfully deleted provided data" }, status=status.HTTP_200_OK)
 
@@ -319,18 +325,30 @@ class MyMissingTransactionLists(APIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = (SessionAuthentication,)
     def get(self, request):
-        my_transactions = TaxTransactionForm.objects.all()
+        serializer = UserSerializer(request.user)
 
-        data_not_in_bank = my_transactions.exclude(
-            trans_date__in=BankTransactionList.objects.values_list('trans_date', flat=True),
-            billing_amount__in=BankTransactionList.objects.values_list('billing_amount', flat=True),
-            first_name__in=BankTransactionList.objects.values_list('first_name', flat=True),
-            last_name__in=BankTransactionList.objects.values_list('last_name', flat=True),
-        )
+        first_name = serializer.data['first_name']
+        last_name = serializer.data['last_name']
 
-        missingTransactionLists = list(data_not_in_bank.values())
+        transactions = TaxTransactionForm.objects.filter(first_name=first_name.upper(), last_name=last_name.upper())
+        bank_transactions = BankTransactionList.objects.filter(first_name=first_name.upper(), last_name=last_name.upper())
+        
+        transaction_dicts = [{'trans_date': obj.trans_date, 'billing_amount': obj.billing_amount, 'merchant_name': obj.merchant_name, 'category':obj.category, 'purpose': obj.purpose, 'first_name': obj.first_name, 'last_name': obj.last_name} for obj in transactions]
+        bank_transactions_dicts = [{'trans_date': obj.trans_date, 'billing_amount': obj.billing_amount, 'first_name': obj.first_name, 'last_name': obj.last_name} for obj in bank_transactions]
+        
+        one_to_one_missing_element = []
+        for transaction_element in transaction_dicts:
+            compare_element = {'trans_date': transaction_element['trans_date'], 'billing_amount': transaction_element['billing_amount'],
+                                'first_name': transaction_element['first_name'], 'last_name': transaction_element['last_name']}
+            if compare_element in bank_transactions_dicts:
+                bank_transactions_dicts.remove(compare_element)
+            else:
+                one_to_one_missing_element.append(transaction_element)
 
-        return JsonResponse(missingTransactionLists, safe=False)
+        return JsonResponse(one_to_one_missing_element, safe=False)
+                
+
+        return JsonResponse(one_to_one_missing_element, safe=False)
     
 class MyMissingBankTransactionLists(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -341,18 +359,22 @@ class MyMissingBankTransactionLists(APIView):
         first_name = serializer.data['first_name']
         last_name = serializer.data['last_name']
 
+        transactions = TaxTransactionForm.objects.filter(first_name=first_name.upper(), last_name=last_name.upper())
         bank_transactions = BankTransactionList.objects.filter(first_name=first_name.upper(), last_name=last_name.upper())
+        
+        transaction_dicts = [{'trans_date': obj.trans_date, 'billing_amount': obj.billing_amount, 'first_name': obj.first_name, 'last_name': obj.last_name} for obj in transactions]
+        bank_transactions_dicts = [{'trans_date': obj.trans_date, 'post_date': obj.post_date, 'billing_amount': obj.billing_amount, 'merchant_name': obj.merchant_name, 'first_name': obj.first_name, 'last_name': obj.last_name} for obj in bank_transactions]
+        
+        one_to_one_missing_element = []
+        for transaction_element in bank_transactions_dicts:
+            compare_element = {'trans_date': transaction_element['trans_date'], 'billing_amount': transaction_element['billing_amount'],
+                                'first_name': transaction_element['first_name'], 'last_name': transaction_element['last_name']}
+            if compare_element in transaction_dicts:
+                transaction_dicts.remove(compare_element)
+            else:
+                one_to_one_missing_element.append(transaction_element)
 
-        data_not_in_transaction = bank_transactions.exclude(
-            trans_date__in=TaxTransactionForm.objects.values_list('trans_date', flat=True),
-            billing_amount__in=TaxTransactionForm.objects.values_list('billing_amount', flat=True),
-            first_name__in=TaxTransactionForm.objects.values_list('first_name', flat=True),
-            last_name__in=TaxTransactionForm.objects.values_list('last_name', flat=True),
-        )
-
-        missingBankTransactionLists = list(data_not_in_transaction.values())
-
-        return JsonResponse(missingBankTransactionLists, safe=False)
+        return JsonResponse(one_to_one_missing_element, safe=False)
     
 class MyMatchingTransactionLists(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -363,24 +385,36 @@ class MyMatchingTransactionLists(APIView):
         first_name = serializer.data['first_name']
         last_name = serializer.data['last_name']
 
-        transactions = TaxTransactionForm.objects.all()
+        transactions = TaxTransactionForm.objects.filter(first_name=first_name.upper(), last_name=last_name.upper())
         bank_lists = BankTransactionList.objects.filter(first_name=first_name.upper(), last_name=last_name.upper())
         
-        transactions_set = set((obj.billing_amount, obj.trans_date, (obj.first_name + " " + obj.last_name)) for obj in transactions)
-        bank_lists_set = set((obj.billing_amount, obj.trans_date, (obj.first_name + " " + obj.last_name)) for obj in bank_lists)
+        one_to_one_matching_elements = []
 
-        common_elements = transactions_set.intersection(bank_lists_set)
+        if len(bank_lists) > len(transactions):
+            bank_dicts = [{'trans_date': obj.trans_date, 'post_date': obj.post_date, 'billing_amount': obj.billing_amount, 'merchant_name': obj.merchant_name, 'first_name': obj.first_name, 'last_name': obj.last_name} for obj in bank_lists]
+            transactions_dicts = [{'trans_date': obj.trans_date, 'billing_amount': obj.billing_amount, 'first_name': obj.first_name, 'last_name': obj.last_name} for obj in transactions]
 
-        common_transaction_lists = TaxTransactionForm.objects.filter(
-                billing_amount__in=[amount for amount, date, name in common_elements],
-                trans_date__in=[date for amount, date, name in common_elements],
-                first_name__in = [name.split(" ")[0] for amount, date, name in common_elements],
-                last_name__in = [name.split(" ")[1] for amount, date, name in common_elements],
-            )
-        
-        matching_data = list(common_transaction_lists.values())
+            for bigger_element in bank_dicts:
+                bigger_compare_element = {'trans_date': bigger_element['trans_date'], 'billing_amount': bigger_element['billing_amount'],
+                'first_name': bigger_element['first_name'], 'last_name': bigger_element['last_name']}
+                if bigger_compare_element in transactions_dicts:
+                    one_to_one_matching_elements.append(bigger_element)
+                    transactions_dicts.remove(bigger_compare_element)
 
-        return JsonResponse(matching_data, safe=False)
+        else:
+            bank_dicts = [{'trans_date': obj.trans_date, 'billing_amount': obj.billing_amount, 'first_name': obj.first_name, 'last_name': obj.last_name} for obj in bank_lists]
+            transactions_dicts = [{'trans_date': obj.trans_date, 'billing_amount': obj.billing_amount, 
+                                   'merchant_name':obj.merchant_name, 'category': obj.category, 'purpose': obj.purpose,
+                                    'first_name': obj.first_name, 'last_name': obj.last_name} for obj in transactions]
+
+            for bigger_element in transactions_dicts:
+                bigger_compare_element = {'trans_date': bigger_element['trans_date'], 'billing_amount': bigger_element['billing_amount'],
+                'first_name': bigger_element['first_name'], 'last_name': bigger_element['last_name']}
+                if bigger_compare_element in bank_dicts:
+                    one_to_one_matching_elements.append(bigger_element)
+                    bank_dicts.remove(bigger_compare_element)
+
+        return JsonResponse(one_to_one_matching_elements, safe=False)
     
 class FilterByDates(APIView):
     permission_classes = (permissions.AllowAny,)
