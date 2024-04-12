@@ -346,10 +346,7 @@ class MyMissingTransactionLists(APIView):
                 one_to_one_missing_element.append(transaction_element)
 
         return JsonResponse(one_to_one_missing_element, safe=False)
-                
-
-        return JsonResponse(one_to_one_missing_element, safe=False)
-    
+                    
 class MyMissingBankTransactionLists(APIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = (SessionAuthentication,)
