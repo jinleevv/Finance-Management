@@ -114,7 +114,7 @@ const MainPage = () => {
           <CardContent>
             <ul className="w-full grid gap-5 p-6 lg:grid-cols-[0.8fr_1fr] sm:grid-cols-1">
               <li className="row-span-3">
-                {/* <Button
+                <Button
                   variant="ghost"
                   className="flex h-full w-full items-start select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-lg hover:shadow-lg"
                   onClick={handleTransactionFrom}
@@ -125,15 +125,15 @@ const MainPage = () => {
                       Upload a corporate card transaction
                     </p>
                   </div>
-                </Button> */}
-                <AnimatedButton
+                </Button>
+                {/* <AnimatedButton
                   title={"Corporate Card Transaction"}
                   description={"Upload a corporate card transaction"}
                   handleFunc={handleTransactionFrom}
-                />
+                /> */}
               </li>
               <li className="row-span-3">
-                {/* <Button
+                <Button
                   variant="ghost"
                   className="flex h-full w-full items-start select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-lg hover:shadow-lg"
                   onClick={handleViewUploadedTransactions}
@@ -144,15 +144,15 @@ const MainPage = () => {
                       View Uploaded Transactions
                     </p>
                   </div>
-                </Button> */}
-                <AnimatedButton
+                </Button>
+                {/* <AnimatedButton
                   title={"View Uploaded Transactions"}
                   description={"View Uploaded Transactions"}
                   handleFunc={handleViewUploadedTransactions}
-                />
+                /> */}
               </li>
               <li className="row-span-3">
-                {/* <Button
+                <Button
                   variant="ghost"
                   className="flex h-full w-full items-start select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-lg hover:shadow-lg"
                   onClick={handleMissingTransactions}
@@ -163,15 +163,15 @@ const MainPage = () => {
                       Missing Transactions
                     </p>
                   </div>
-                </Button> */}
-                <AnimatedButton
+                </Button>
+                {/* <AnimatedButton
                   title={"Missing Transactions"}
                   description={"Missing Transactions"}
                   handleFunc={handleMissingTransactions}
-                />
+                /> */}
               </li>
               <li className="row-span-3">
-                {/* <Button
+                <Button
                   variant="ghost"
                   className="flex h-full w-full items-start select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-lg hover:shadow-lg"
                   onClick={handleFinanceDepartment}
@@ -182,12 +182,12 @@ const MainPage = () => {
                       Finance Department
                     </p>
                   </div>
-                </Button> */}
-                <AnimatedButton
+                </Button>
+                {/* <AnimatedButton
                   title={"Finance Department"}
                   description={"Finance Department"}
                   handleFunc={handleFinanceDepartment}
-                />
+                /> */}
               </li>
             </ul>
             <Toaster richColors closeButton />

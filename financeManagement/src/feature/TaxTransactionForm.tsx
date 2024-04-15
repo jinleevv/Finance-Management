@@ -53,7 +53,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ArrowLeftIcon, ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { useNavigate } from "react-router-dom";
 import { useHooks } from "@/hooks";
-import { useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 const formSchema = z.object({
   date: z.date({
@@ -75,6 +75,7 @@ const formSchema = z.object({
 const TaxTransactionForm = () => {
   const nativate = useNavigate();
   const { clientI, userName } = useHooks();
+  const [submitValuesElement, setSubmitValuesElement] = useState(<div></div>);
   const today = new Date();
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -84,7 +85,7 @@ const TaxTransactionForm = () => {
   useEffect(() => {
     const billingAmount = parseFloat(form.getValues().billing_amount);
     if (!isNaN(billingAmount)) {
-      const taxableAmount = billingAmount / 1.14975
+      const taxableAmount = billingAmount / 1.14975;
       const tvqValue = (taxableAmount * 0.09975).toFixed(2).toString();
       const tpsValue = (taxableAmount * 0.05).toFixed(2).toString();
       form.setValue("tvq", tvqValue);
@@ -151,6 +152,21 @@ const TaxTransactionForm = () => {
     } catch (error) {
       toast("Updating the transaction history failed");
     }
+  }
+
+  function handleFormValues() {
+    const values = form.getValues();
+    const submitValues = `Date: ${
+      values.date.toISOString().split("T")[0]
+    } \n Billing Amount: ${values.billing_amount}, TPS: ${values.tps}, TVQ: ${
+      values.tvq
+    } \n Merchant Name: ${values.merchant_name}`;
+    const valuesRender = submitValues.split("\n").map((line, index) => (
+      <Fragment key={index}>
+        {line} <br />
+      </Fragment>
+    ));
+    setSubmitValuesElement(<div>{valuesRender}</div>);
   }
 
   return (
@@ -478,7 +494,7 @@ const TaxTransactionForm = () => {
               </Button>
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button>Submit</Button>
+                  <Button onClick={handleFormValues}>Submit</Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                   <DialogHeader>
@@ -491,9 +507,7 @@ const TaxTransactionForm = () => {
                     <Alert variant="destructive">
                       <ExclamationTriangleIcon className="h-4 w-4" />
                       <AlertTitle>Please review before submitting</AlertTitle>
-                      <AlertDescription>
-                        If you submit, you cannot undo the change!
-                      </AlertDescription>
+                      <AlertDescription>{submitValuesElement}</AlertDescription>
                     </Alert>
                   </div>
                   <DialogFooter>

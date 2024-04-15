@@ -72,7 +72,7 @@ const AnimatedButton = ({
   return (
     <animated.div
       ref={target}
-      className="relative w-full lg:h-[200px] sm:h-[130px] xsm:h-[130px] cursor-grab overflow-hidden touch-action-none hover:shadow-2xl"
+      className="relative w-full lg:h-[150px] sm:h-[130px] xsm:h-[130px] cursor-grab overflow-hidden touch-action-none hover:shadow-2xl"
       style={{
         transform: "perspective(600px)",
         x,
