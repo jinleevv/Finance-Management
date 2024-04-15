@@ -84,8 +84,9 @@ const TaxTransactionForm = () => {
   useEffect(() => {
     const billingAmount = parseFloat(form.getValues().billing_amount);
     if (!isNaN(billingAmount)) {
-      const tvqValue = (billingAmount * 0.09975).toFixed(3).toString();
-      const tpsValue = (billingAmount * 0.05).toFixed(3).toString();
+      const taxableAmount = billingAmount / 1.14975
+      const tvqValue = (taxableAmount * 0.09975).toFixed(2).toString();
+      const tpsValue = (taxableAmount * 0.05).toFixed(2).toString();
       form.setValue("tvq", tvqValue);
       form.setValue("tps", tpsValue);
     }
@@ -106,7 +107,7 @@ const TaxTransactionForm = () => {
         values.billing_amount +
         "__" +
         values.merchant_name +
-        ".png";
+        ".jpg";
       const name = userName.split(" ");
       const firstName = name.slice(0, -1).join(" ");
       const lastName = name[name.length - 1];

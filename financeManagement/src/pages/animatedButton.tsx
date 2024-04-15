@@ -72,7 +72,7 @@ const AnimatedButton = ({
   return (
     <animated.div
       ref={target}
-      className="relative w-full h-[200px] cursor-grab overflow-hidden touch-action-none hover:shadow-2xl"
+      className="relative w-full lg:h-[200px] sm:h-[130px] xsm:h-[130px] cursor-grab overflow-hidden touch-action-none hover:shadow-2xl"
       style={{
         transform: "perspective(600px)",
         x,
@@ -87,7 +87,7 @@ const AnimatedButton = ({
         className="flex h-full w-full items-start text-black select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-lg hover:shadow-lg"
         onClick={handleFunc}
       >
-        <div className="mb-2 mt-4 ml-4 text-lg font-medium text-left">
+        <div className="mb-2 mt-4 ml-2 text-lg font-medium text-left">
           {title}
           <p className="text-sm leading-tight text-muted-foreground">
             {description}
