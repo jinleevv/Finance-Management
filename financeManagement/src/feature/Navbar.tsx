@@ -19,6 +19,8 @@ const Navbar = () => {
     logedInUser,
     setLogedInUser,
     setUserName,
+    setUserFirstName,
+    setUserLastName,
     setUserEmail,
     setDepartment,
   } = useHooks();
@@ -46,6 +48,8 @@ const Navbar = () => {
             .then((res) => {
               const first_name = res.data.user.first_name;
               const last_name = res.data.user.last_name;
+              setUserFirstName(first_name);
+              setUserLastName(last_name);
               setUserName(first_name + " " + last_name);
               setUserEmail(res.data.user.email);
               setDepartment(res.data.user.department);

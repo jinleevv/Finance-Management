@@ -44,7 +44,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  const { clientI, clientII, urlII, setTableData } = useHooks();
+  const { clientI, clientII, urlII, userFirstName, userLastName, setTableData } = useHooks();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -95,6 +95,8 @@ export function DataTable<TData, TValue>({
     const data = JSON.stringify({
       date_from: date.from.toISOString().split("T")[0],
       date_to: date.to.toISOString().split("T")[0],
+      first_name: userFirstName,
+      last_name: userLastName,
     });
     await clientI
       .post("/api/filter-by-dates/", data, {

@@ -28,6 +28,8 @@ export type BankTableData = {
 };
 
 const logedInUserAtom = atomWithImmer<boolean>(false);
+const userFirstNameAtom = atomWithImmer<string>("");
+const userLastNameAtom = atomWithImmer<string>("");
 const userNameAtom = atomWithImmer<string>("");
 const userEmailAtom = atomWithImmer<string>("");
 const tableDataAtom = atomWithImmer<Array<TableData>>([]);
@@ -39,20 +41,22 @@ const departmentAtom = atomWithImmer<string>("");
 
 export function useHooks() {
   const clientI = axios.create({
-    // baseURL: "http://127.0.0.1:8000",
+    baseURL: "http://127.0.0.1:8000",
     // baseURL: "http://card.ultiumcam.local:8000",
-    baseURL: "http://192.168.3.248:8000",
+    // baseURL: "http://192.168.3.248:8000",
   });
   const clientII = axios.create({
-    // baseURL: "http://localhost:8000",
+    baseURL: "http://localhost:8000",
     // baseURL: "http://127.0.0.1:8000",
-    baseURL: "http://card.ultiumcam.local:8000",
+    // baseURL: "http://card.ultiumcam.local:8000",
   });
-  // const urlII = "http://localhost:8000";
-  const urlII = "http://card.ultiumcam.local:8000";
+  const urlII = "http://localhost:8000";
+  // const urlII = "http://card.ultiumcam.local:8000";
 
   const [logedInUser, setLogedInUser] = useAtom(logedInUserAtom);
   const [userName, setUserName] = useAtom(userNameAtom);
+  const [userFirstName, setUserFirstName] = useAtom(userFirstNameAtom);
+  const [userLastName, setUserLastName] = useAtom(userLastNameAtom);
   const [userEmail, setUserEmail] = useAtom(userEmailAtom);
   const [tableData, setTableData] = useAtom(tableDataAtom);
   const [missingTableData, setMissingTableData] = useAtom(missingTableDataAtom);
@@ -72,6 +76,10 @@ export function useHooks() {
     setLogedInUser,
     userName,
     setUserName,
+    userFirstName,
+    setUserFirstName,
+    userLastName,
+    setUserLastName,
     userEmail,
     setUserEmail,
     tableData,

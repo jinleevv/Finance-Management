@@ -422,8 +422,10 @@ class FilterByDates(APIView):
 
         date_from = datetime.strptime(data.get('date_from'), "%Y-%m-%d")
         date_to = datetime.strptime(data.get('date_to'), "%Y-%m-%d")
+        first_name = data.get('first_name')
+        last_name = data.get('last_name')
 
-        filtered_data = TaxTransactionForm.objects.filter(trans_date__range=[date_from, date_to])
+        filtered_data = TaxTransactionForm.objects.filter(first_name=first_name.upper(), last_name=last_name.upper(), trans_date__range=[date_from, date_to])
 
         my_data = list(filtered_data.values())
 
