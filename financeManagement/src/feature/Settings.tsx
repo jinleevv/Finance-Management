@@ -28,6 +28,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
@@ -47,7 +48,7 @@ export function Settings() {
   const { clientI, userName, userEmail } = useHooks();
   const today = new Date();
 
-  function handleMain () {
+  function handleMain() {
     navigate("/main");
   }
 
@@ -71,9 +72,27 @@ export function Settings() {
           oldPassword: "",
           newPassword: "",
         });
-        toast("Password has been Updated", {
+        toast("Password has been updated, please login again", {
           description: today.toISOString(),
         });
+      })
+      .catch((err) => {
+        if (err.response["data"]["reason"] === "Non existing user") {
+          toast(`Password update failed: Current password is wrong}`, {
+            description: today.toISOString(),
+          });
+        } else if (err.response["data"]["new_password"]) {
+          toast(
+            `Password update failed: ${err.response["data"]["new_password"]}`,
+            {
+              description: today.toISOString(),
+            }
+          );
+        } else {
+          toast(`Password update failed`, {
+            description: today.toISOString(),
+          });
+        }
       });
   }
 
@@ -152,6 +171,7 @@ export function Settings() {
                           render={({ field }) => (
                             <FormItem className="mt-3">
                               <FormLabel>New password</FormLabel>
+                              <FormMessage className="-mt-2 text-[13.5px]"></FormMessage>
                               <FormControl>
                                 <Input
                                   placeholder="New password"
@@ -231,7 +251,9 @@ export function Settings() {
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button variant="outline" onClick={handleMain}>Main Menu</Button>
+        <Button variant="outline" onClick={handleMain}>
+          Main Menu
+        </Button>
         <Button>Happy</Button>
       </CardFooter>
     </Card>

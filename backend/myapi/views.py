@@ -76,11 +76,15 @@ class UpdatePassword(APIView):
         login_data = {"email": data.get("email"), "password": data.get("old_password")}
 
         login_serializer = UserLoginSerializer(data=login_data)
+        if login_serializer.is_valid(raise_exception=True):
+            try:
+                user = login_serializer.check_user(login_data)
+            except ValidationError:
+                return Response(data={"reason": "Non existing user"}, status=status.HTTP_400_BAD_REQUEST)        
+
         serializer = ChangePasswordSerializer(data=data)
 
-        user = login_serializer.check_user(login_data)
-
-        if serializer.is_valid() and login_serializer.is_valid(raise_exception=True):
+        if serializer.is_valid():
             user.set_password(data.get("new_password"))
             user.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
