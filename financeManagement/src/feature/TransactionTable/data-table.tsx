@@ -153,7 +153,7 @@ export function DataTable<TData, TValue>({
             imagesFolder.file(filename.replace("uploads/", ""), response.data);
           })
           .catch((error) => {
-            console.error(`Error downloading image ${filename}:`, error);
+            toast(`Error downloading image ${filename}:`, error);
             // Handle error, e.g., display an error message to the user
           })
       );
@@ -168,35 +168,8 @@ export function DataTable<TData, TValue>({
         saveAs(content, `images_${todayDateString}.zip`);
       })
       .catch((error) => {
-        console.error("Error downloading images:", error);
-        // Handle error, e.g., display an error message to the user
+        toast("Error downloading images:", error);
       });
-
-    //   axios({
-    //     url: url,
-    //     method: "GET",
-    //     responseType: "blob",
-    //   })
-    //     .then((response) => {
-    //       // Create a blob URL for the file
-
-    //       const url = window.URL.createObjectURL(new Blob([response.data]));
-
-    //       // Create a link element to trigger the download
-    //       const link = document.createElement("a");
-    //       link.href = url;
-    //       link.setAttribute("download", filename.replace("uploads/", ""));
-
-    //       // Append the link to the body and click it to start the download
-    //       document.body.appendChild(link);
-    //       link.click();
-
-    //       // Cleanup: Remove the link and revoke the blob URL
-    //       link.parentNode.removeChild(link);
-    //       window.URL.revokeObjectURL(url);
-    //     })
-    //     .catch((err) => toast("Error downloading file: ", err));
-    // });
   }
 
   return (
