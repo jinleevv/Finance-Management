@@ -34,6 +34,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 
 interface DataTableProps<TableData, TValue> {
   columns: ColumnDef<TableData, TValue>[];
@@ -44,7 +46,14 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  const { clientI, clientII, urlII, userFirstName, userLastName, setTableData } = useHooks();
+  const {
+    clientI,
+    clientII,
+    urlII,
+    userFirstName,
+    userLastName,
+    setTableData,
+  } = useHooks();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -125,36 +134,71 @@ export function DataTable<TData, TValue>({
 
   async function handleDownloadImage() {
     const data = table.getFilteredSelectedRowModel().rows;
+    const todayDate = new Date();
+    const todayDateString = todayDate.toISOString().split("T")[0];
+    const zip = new JSZip();
+    const imagesFolder = zip.folder(`images_${todayDateString}`);
+
+    const downloadPromises: Promise<void>[] = [];
+
     data.forEach((element) => {
       let filename = element.original["img"];
       const url = urlII + "/api/download/" + filename;
 
-      axios({
-        url: url,
-        method: "GET",
-        responseType: "blob",
-      })
-        .then((response) => {
-          // Create a blob URL for the file
-
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-
-          // Create a link element to trigger the download
-          const link = document.createElement("a");
-          link.href = url;
-          link.setAttribute("download", filename.replace("uploads/", ""));
-
-          // Append the link to the body and click it to start the download
-          document.body.appendChild(link);
-          link.click();
-
-          // Cleanup: Remove the link and revoke the blob URL
-          link.parentNode.removeChild(link);
-          window.URL.revokeObjectURL(url);
-        })
-        .catch((err) => toast("Error downloading file: ", err));
+      downloadPromises.push(
+        axios
+          .get(url, { responseType: "blob" })
+          .then((response) => {
+            // Add the image blob to the zip file
+            imagesFolder.file(filename.replace("uploads/", ""), response.data);
+          })
+          .catch((error) => {
+            console.error(`Error downloading image ${filename}:`, error);
+            // Handle error, e.g., display an error message to the user
+          })
+      );
     });
+    // Wait for all promises to resolve
+    Promise.all(downloadPromises)
+      .then(() => {
+        // Generate the zip file
+        return zip.generateAsync({ type: "blob" });
+      })
+      .then((content) => {
+        saveAs(content, `images_${todayDateString}.zip`);
+      })
+      .catch((error) => {
+        console.error("Error downloading images:", error);
+        // Handle error, e.g., display an error message to the user
+      });
+
+    //   axios({
+    //     url: url,
+    //     method: "GET",
+    //     responseType: "blob",
+    //   })
+    //     .then((response) => {
+    //       // Create a blob URL for the file
+
+    //       const url = window.URL.createObjectURL(new Blob([response.data]));
+
+    //       // Create a link element to trigger the download
+    //       const link = document.createElement("a");
+    //       link.href = url;
+    //       link.setAttribute("download", filename.replace("uploads/", ""));
+
+    //       // Append the link to the body and click it to start the download
+    //       document.body.appendChild(link);
+    //       link.click();
+
+    //       // Cleanup: Remove the link and revoke the blob URL
+    //       link.parentNode.removeChild(link);
+    //       window.URL.revokeObjectURL(url);
+    //     })
+    //     .catch((err) => toast("Error downloading file: ", err));
+    // });
   }
+
   return (
     <>
       <div className="lg:flex sm:grid gap-2 justify-between">
