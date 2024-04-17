@@ -75,7 +75,7 @@ const formSchema = z.object({
 
 const TaxTransactionForm = () => {
   const nativate = useNavigate();
-  const { clientI, userName } = useHooks();
+  const { clientI, userFirstName, userLastName } = useHooks();
   const [checked, setChecked] = useState(false);
   const [submitValuesElement, setSubmitValuesElement] = useState(<div></div>);
   const today = new Date();
@@ -112,16 +112,31 @@ const TaxTransactionForm = () => {
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const filename =
-        values.date.toISOString().split("T")[0] +
-        "__" +
-        values.billing_amount +
-        "__" +
-        values.merchant_name +
-        ".jpg";
-      const name = userName.split(" ");
-      const firstName = name.slice(0, -1).join(" ");
-      const lastName = name[name.length - 1];
+      const lastDotIndex = values.file[0].name.lastIndexOf(".");
+
+      let extension = "";
+      let filename = "";
+      if (lastDotIndex !== -1) {
+        extension = values.file[0].name.substring(lastDotIndex + 1);
+      }
+
+      if (extension === "pdf") {
+        filename =
+          values.date.toISOString().split("T")[0] +
+          "__" +
+          values.billing_amount +
+          "__" +
+          values.merchant_name +
+          ".pdf";
+      } else {
+        filename =
+          values.date.toISOString().split("T")[0] +
+          "__" +
+          values.billing_amount +
+          "__" +
+          values.merchant_name +
+          ".jpg";
+      }
 
       let data = new FormData();
       data.append("date", values.date.toISOString().split("T")[0]);
@@ -131,8 +146,8 @@ const TaxTransactionForm = () => {
       data.append("tvq", values.tvq);
       data.append("merchant_name", values.merchant_name);
       data.append("purpose", values.purpose);
-      data.append("first_name", firstName);
-      data.append("last_name", lastName);
+      data.append("first_name", userFirstName);
+      data.append("last_name", userLastName);
       data.append("category", values.category);
       data.append("attendees", values.attendees);
       data.append("project", values.project);
@@ -217,7 +232,7 @@ const TaxTransactionForm = () => {
                 <FormField
                   control={form.control}
                   name="file"
-                  render={({ field }) => (
+                  render={({}) => (
                     <FormItem>
                       <FormMessage className="-mt-2 text-[13.5px]"></FormMessage>
                       <FormControl>
