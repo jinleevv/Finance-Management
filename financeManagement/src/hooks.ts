@@ -41,17 +41,17 @@ const departmentAtom = atomWithImmer<string>("");
 
 export function useHooks() {
   const clientI = axios.create({
-    baseURL: "http://127.0.0.1:8000",
-    // baseURL: "http://card.ultiumcam.local:8000",
-    // baseURL: "http://192.168.3.248:8000",
-  });
-  const clientII = axios.create({
-    baseURL: "http://localhost:8000",
     // baseURL: "http://127.0.0.1:8000",
     // baseURL: "http://card.ultiumcam.local:8000",
+    baseURL: "http://192.168.3.248:8000",
   });
-  const urlII = "http://localhost:8000";
-  // const urlII = "http://card.ultiumcam.local:8000";
+  const clientII = axios.create({
+    // baseURL: "http://localhost:8000",
+    // baseURL: "http://127.0.0.1:8000",
+    baseURL: "http://card.ultiumcam.local:8000",
+  });
+  // const urlII = "http://localhost:8000";
+  const urlII = "http://card.ultiumcam.local:8000";
 
   const [logedInUser, setLogedInUser] = useAtom(logedInUserAtom);
   const [userName, setUserName] = useAtom(userNameAtom);

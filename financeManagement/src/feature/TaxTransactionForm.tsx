@@ -54,6 +54,7 @@ import { ArrowLeftIcon, ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { useNavigate } from "react-router-dom";
 import { useHooks } from "@/hooks";
 import { Fragment, useEffect, useState } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const formSchema = z.object({
   date: z.date({
@@ -75,6 +76,7 @@ const formSchema = z.object({
 const TaxTransactionForm = () => {
   const nativate = useNavigate();
   const { clientI, userName } = useHooks();
+  const [checked, setChecked] = useState(false);
   const [submitValuesElement, setSubmitValuesElement] = useState(<div></div>);
   const today = new Date();
   // 1. Define your form.
@@ -85,11 +87,19 @@ const TaxTransactionForm = () => {
   useEffect(() => {
     const billingAmount = parseFloat(form.getValues().billing_amount);
     if (!isNaN(billingAmount)) {
-      const taxableAmount = billingAmount / 1.14975;
-      const tvqValue = (taxableAmount * 0.09975).toFixed(2).toString();
-      const tpsValue = (taxableAmount * 0.05).toFixed(2).toString();
-      form.setValue("tvq", tvqValue);
-      form.setValue("tps", tpsValue);
+      if (checked) {
+        const taxableAmount = billingAmount / 1.14975;
+        const tvqValue = (taxableAmount * 0.09975).toFixed(2).toString();
+        const tpsValue = (taxableAmount * 0.05).toFixed(2).toString();
+        form.setValue("tvq", tvqValue);
+        form.setValue("tps", tpsValue);
+      } else {
+        form.setValue("tvq", "");
+        form.setValue("tps", "");
+      }
+    } else {
+      form.setValue("tvq", "");
+      form.setValue("tps", "");
     }
   }, [form.watch("billing_amount")]);
 
@@ -167,6 +177,22 @@ const TaxTransactionForm = () => {
       </Fragment>
     ));
     setSubmitValuesElement(<div>{valuesRender}</div>);
+  }
+
+  function handleCheckBox() {
+    if (checked) {
+      form.setValue("tvq", "");
+      form.setValue("tps", "");
+      setChecked(false);
+    } else {
+      const billingAmount = parseFloat(form.getValues().billing_amount);
+      const taxableAmount = billingAmount / 1.14975;
+      const tvqValue = (taxableAmount * 0.09975).toFixed(2).toString();
+      const tpsValue = (taxableAmount * 0.05).toFixed(2).toString();
+      form.setValue("tvq", tvqValue);
+      form.setValue("tps", tpsValue);
+      setChecked(true);
+    }
   }
 
   return (
@@ -308,7 +334,22 @@ const TaxTransactionForm = () => {
                 </div>
                 <div className="flex gap-20 sm:gap-3 xsm:gap-3">
                   <div className="grid space-y-3">
-                    <Label htmlFor="amount">Billing Amount</Label>
+                    <div className="flex justify-between">
+                      <Label htmlFor="amount">Billing Amount</Label>
+                      <div className="flex items-center space-x-1">
+                        <Checkbox
+                          id="terms"
+                          checked={checked}
+                          onCheckedChange={handleCheckBox}
+                        />
+                        <label
+                          htmlFor="terms"
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          Auto tax
+                        </label>
+                      </div>
+                    </div>
                     <FormField
                       control={form.control}
                       name="billing_amount"

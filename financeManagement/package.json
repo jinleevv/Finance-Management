@@ -40,6 +40,7 @@
     "file-saver": "^2.0.5",
     "jotai": "^2.6.5",
     "jotai-immer": "^0.3.0",
+    "jszip": "^3.10.1",
     "leva": "^0.9.35",
     "lucide-react": "^0.331.0",
     "maath": "^0.10.7",
