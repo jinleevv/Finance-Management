@@ -21,8 +21,6 @@ import ViewBankTransactionLists from "./pages/viewBankTransactionListsPage";
 import FinanceDepartmentFeatures from "./pages/financeDepartmentFeaturesPage";
 import MissingTransactionsPage from "./pages/missingTransactionsPage";
 
-
-
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }

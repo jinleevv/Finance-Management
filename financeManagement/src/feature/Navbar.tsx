@@ -28,12 +28,12 @@ const Navbar = () => {
   const { clientII } = useHooks();
 
   const darkModeClassName =
-    "flex sm:w-full sm:h-full sm:m-auto relative z-50 p-6 py-4  w-full items-center justify-between space-x-6 shadow-lg bg-black opacity-95";
+    "flex sm:w-full sm:m-auto relative z-50 p-6 py-4  w-full items-center justify-between space-x-6 shadow-lg bg-black opacity-95";
   const lightModeClassName =
-    "flex sm:w-full sm:h-full sm:m-auto relative z-50 p-6 py-4  w-full items-center justify-between space-x-6 shadow-md bg-white opacity-95";
+    "flex sm:w-full sm:m-auto relative z-50 p-6 py-4  w-full items-center justify-between space-x-6 shadow-md bg-white opacity-95";
 
   useEffect(() => {
-    clientII
+     clientII
       .get("/api/sessionid-exist/")
       .then((res) => {
         if (res.status === 204) {
@@ -48,11 +48,13 @@ const Navbar = () => {
             .then((res) => {
               const first_name = res.data.user.first_name;
               const last_name = res.data.user.last_name;
+
               setUserFirstName(first_name);
               setUserLastName(last_name);
               setUserName(first_name + " " + last_name);
               setUserEmail(res.data.user.email);
               setDepartment(res.data.user.department);
+
               setLogedInUser(true);
             })
             .catch(() => {
@@ -64,7 +66,7 @@ const Navbar = () => {
         setLogedInUser(false);
         toast("Something went wrong", { id: 1 });
       });
-  });
+  }, []);
 
   return (
     <>

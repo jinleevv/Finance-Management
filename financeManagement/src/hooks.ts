@@ -68,6 +68,7 @@ export function useHooks() {
     matchingTransactionsDataAtom
   );
   const [department, setDepartment] = useAtom(departmentAtom);
+
   return {
     clientI,
     clientII,

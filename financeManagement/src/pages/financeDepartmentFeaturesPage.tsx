@@ -13,7 +13,7 @@ import { FaceIcon } from "@radix-ui/react-icons";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useHooks } from "@/hooks";
-import AnimatedButton from "./animatedButton";
+import { MainPageSectionButton } from "@/feature/MainPageFeatures/MainPageSectionButton";
 
 const FinanceDepartmentFeatures = () => {
   const navigate = useNavigate();
@@ -94,7 +94,7 @@ const FinanceDepartmentFeatures = () => {
       <div className="w-full h-full m-auto">
         <Navbar />
         <div className="h-full">
-          <Card className="lg:w-1/2 sm:w-full m-auto lg:mt-28 sm:mt-0 shadow-xl lg:opacity-95 sm:opacity-90">
+          <Card className="lg:w-1/2 sm:w-full m-auto lg:mt-28 sm:mt-0 shadow-xl">
             <CardHeader>
               <div className="flex justify-between">
                 <CardTitle>What would you like to perform?</CardTitle>
@@ -106,22 +106,22 @@ const FinanceDepartmentFeatures = () => {
             </CardHeader>
             <CardContent>
               <div className="lg:flex gap-8 mb-4 sm:space-y-3 xsm:space-y-3">
-                <AnimatedButton
+                <MainPageSectionButton
                   title={"Upload Bank Transaction Lists"}
                   description={"Upload Bank Transaction Lists"}
-                  handleFunc={handleUploadBankTransactionLists}
+                  handleFunction={handleUploadBankTransactionLists}
                 />
-                <AnimatedButton
+                <MainPageSectionButton
                   title={"Download Transaction Lists"}
                   description={"Download Transaction Lists"}
-                  handleFunc={handleDownloadLists}
+                  handleFunction={handleDownloadLists}
                 />
               </div>
               <div>
-                <AnimatedButton
+                <MainPageSectionButton
                   title={"Bank Transaction Lists"}
                   description={"Bank Transaction Lists"}
-                  handleFunc={handleViewBankTransactionLists}
+                  handleFunction={handleViewBankTransactionLists}
                 />
               </div>
               <Toaster richColors closeButton />

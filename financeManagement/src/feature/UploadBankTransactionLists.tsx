@@ -95,7 +95,7 @@ const UploadBankTransactionLists = () => {
   }
 
   return (
-    <Card className="w-[800px] sm:w-full xsm:w-full m-auto mt-20 sm:mt-0 xsm:mt-0 opacity-90 sm:opacity-85">
+    <Card className="w-[800px] sm:w-full xsm:w-full m-auto mt-20 sm:mt-0 xsm:mt-0">
       <CardHeader>
         <div className="flex justify-between">
           <CardTitle>Upload Bank Transaction Lists</CardTitle>

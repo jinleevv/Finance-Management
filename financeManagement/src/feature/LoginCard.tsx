@@ -64,7 +64,7 @@ export function LoginCard() {
   }
 
   return (
-    <Card className="lg:w-[500px] sm:w-full sm:h-svh m-auto lg:mt-36 sm:mt-0 opacity-90 sm:opacity-85">
+    <Card className="lg:w-[500px] sm:w-full sm:h-svh m-auto lg:mt-36 sm:mt-0">
       <CardHeader>
         <CardTitle>Login</CardTitle>
         <CardDescription>Ulitum CAM finance management account</CardDescription>

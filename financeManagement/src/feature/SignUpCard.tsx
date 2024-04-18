@@ -93,7 +93,7 @@ export function SignUpCardForm() {
   }
 
   return (
-    <Card className="lg:w-[500px] sm:w-full sm:h-svh m-auto lg:mt-24 sm:mt-0 opacity-90 sm:opacity-85">
+    <Card className="lg:w-[500px] sm:w-full sm:h-svh m-auto lg:mt-24 sm:mt-0">
       <CardHeader>
         <CardTitle>Sign Up</CardTitle>
         <CardDescription>

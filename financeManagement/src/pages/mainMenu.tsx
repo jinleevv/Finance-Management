@@ -8,11 +8,10 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FaceIcon } from "@radix-ui/react-icons";
-import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useHooks } from "@/hooks";
-import AnimatedButton from "./animatedButton";
+import { MainPageSectionButton } from "@/feature/MainPageFeatures/MainPageSectionButton";
 
 const MainPage = () => {
   const navigate = useNavigate();
@@ -99,9 +98,9 @@ const MainPage = () => {
   }
   return (
     <>
-      <Navbar />
-      <div className="h-full">
-        <Card className="lg:w-1/2 sm:w-full m-auto lg:mt-28 sm:mt-0 shadow-xl lg:opacity-95 sm:opacity-90">
+      <div className="h-svh">
+        <Navbar />
+        <Card className="lg:w-1/2 sm:w-full m-auto lg:mt-32 sm:mt-0 rounded-3xl sm:rounded-t-none xsm:rounded-t-none">
           <CardHeader>
             <div className="flex justify-between">
               <CardTitle>What would you like to perform?</CardTitle>
@@ -109,88 +108,39 @@ const MainPage = () => {
                 <FaceIcon />
               </Button>
             </div>
-            <CardDescription>Choose a task from down below</CardDescription>
+            <CardDescription>Choose an option from down below</CardDescription>
           </CardHeader>
           <CardContent>
-            <ul className="w-full grid gap-5 p-6 lg:grid-cols-[0.8fr_1fr] sm:grid-cols-1">
+            <ul className="w-full grid rounded-md gap-5 lg:grid-cols-2 sm:grid-cols-1">
               <li className="row-span-3">
-                <Button
-                  variant="ghost"
-                  className="flex h-full w-full items-start select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-lg hover:shadow-lg"
-                  onClick={handleTransactionFrom}
-                >
-                  <div className="mb-2 mt-4 ml-4 text-lg font-medium text-left">
-                    Corporate Card Transaction
-                    <p className="text-sm leading-tight text-muted-foreground">
-                      Upload a corporate card transaction
-                    </p>
-                  </div>
-                </Button>
-                {/* <AnimatedButton
+                <MainPageSectionButton
                   title={"Corporate Card Transaction"}
                   description={"Upload a corporate card transaction"}
-                  handleFunc={handleTransactionFrom}
-                /> */}
+                  handleFunction={handleTransactionFrom}
+                />
               </li>
               <li className="row-span-3">
-                <Button
-                  variant="ghost"
-                  className="flex h-full w-full items-start select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-lg hover:shadow-lg"
-                  onClick={handleViewUploadedTransactions}
-                >
-                  <div className="mb-2 mt-4 ml-4 text-lg font-medium text-left">
-                    View Uploaded Transactions
-                    <p className="text-sm leading-tight text-muted-foreground">
-                      View Uploaded Transactions
-                    </p>
-                  </div>
-                </Button>
-                {/* <AnimatedButton
+                <MainPageSectionButton
                   title={"View Uploaded Transactions"}
                   description={"View Uploaded Transactions"}
-                  handleFunc={handleViewUploadedTransactions}
-                /> */}
+                  handleFunction={handleViewUploadedTransactions}
+                />
               </li>
               <li className="row-span-3">
-                <Button
-                  variant="ghost"
-                  className="flex h-full w-full items-start select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-lg hover:shadow-lg"
-                  onClick={handleMissingTransactions}
-                >
-                  <div className="mb-2 mt-4 ml-4 text-lg font-medium text-left">
-                    Missing Transactions
-                    <p className="text-sm leading-tight text-muted-foreground">
-                      Missing Transactions
-                    </p>
-                  </div>
-                </Button>
-                {/* <AnimatedButton
+                <MainPageSectionButton
                   title={"Missing Transactions"}
-                  description={"Missing Transactions"}
-                  handleFunc={handleMissingTransactions}
-                /> */}
+                  description={"View Missing Transactions"}
+                  handleFunction={handleMissingTransactions}
+                />
               </li>
               <li className="row-span-3">
-                <Button
-                  variant="ghost"
-                  className="flex h-full w-full items-start select-none flex-col rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-lg hover:shadow-lg"
-                  onClick={handleFinanceDepartment}
-                >
-                  <div className="mb-2 mt-4 ml-4 text-lg font-medium text-left">
-                    Finance Department
-                    <p className="text-sm leading-tight text-muted-foreground">
-                      Finance Department
-                    </p>
-                  </div>
-                </Button>
-                {/* <AnimatedButton
+                <MainPageSectionButton
                   title={"Finance Department"}
                   description={"Finance Department"}
-                  handleFunc={handleFinanceDepartment}
-                /> */}
+                  handleFunction={handleFinanceDepartment}
+                />
               </li>
             </ul>
-            <Toaster richColors closeButton />
           </CardContent>
         </Card>
       </div>

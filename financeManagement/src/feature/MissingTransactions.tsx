@@ -22,7 +22,7 @@ const ViewMissingTransactions = () => {
     <>
       <div className="lg:flex w-full">
         <div className="lg:w-1/2 h-5/6">
-          <Card className="h-full m-auto mt-1 opacity-90">
+          <Card className="h-full m-auto mt-1">
             <CardContent className="mt-5">
               <div className="lg:flex sm:grid w-full">
                 <Button variant="outline" onClick={handleCancel} size="sm">
@@ -39,7 +39,7 @@ const ViewMissingTransactions = () => {
           </Card>
         </div>
         <div className="lg:w-1/2 h-5/6">
-          <Card className="h-full m-auto mt-1 opacity-90">
+          <Card className="h-full m-auto mt-1">
             <CardContent className="mt-5">
               <div className="lg:flex sm:grid w-full">
                 <Button variant="outline" onClick={handleCancel} size="sm">
@@ -67,7 +67,7 @@ const ViewMissingTransactions = () => {
         </div>
       </div>
       <div className="w-full">
-        <Card className="h-full m-auto mt-1 opacity-90">
+        <Card className="h-full m-auto mt-1">
           <CardContent className="mt-5">
             <div className="lg:flex sm:grid w-full">
               <div className="m-auto">

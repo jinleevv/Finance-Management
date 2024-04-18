@@ -174,7 +174,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <>
-      <div className="lg:flex sm:grid gap-2 justify-between">
+      <div className="lg:flex sm:grid gap-2 justify-between mb-2">
         <div className="lg:flex w-full gap-2 sm:space-y-2 xsm:space-y-2">
           <Popover>
             <PopoverTrigger asChild>

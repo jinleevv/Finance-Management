@@ -97,7 +97,7 @@ export function Settings() {
   }
 
   return (
-    <Card className="sm:w-full h-full lg:m-10 sm:m-0 z-10 p-5 opacity-90 sm:overflow-y-auto">
+    <Card className="sm:w-full h-full lg:m-10 sm:m-0 z-10 p-5 sm:overflow-y-auto">
       <CardHeader>
         <CardTitle>User Settings</CardTitle>
         <CardDescription>User Information</CardDescription>

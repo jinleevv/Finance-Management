@@ -41,7 +41,13 @@ export function MyMatchingDataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  const { clientI, clientII, userFirstName, userLastName, setMatchingTableData } = useHooks();
+  const {
+    clientI,
+    clientII,
+    userFirstName,
+    userLastName,
+    setMatchingTableData,
+  } = useHooks();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -102,7 +108,7 @@ export function MyMatchingDataTable<TData, TValue>({
 
   return (
     <>
-      <div className="lg:flex gap-2 sm:space-y-2">
+      <div className="lg:flex gap-2 sm:space-y-2 mb-2">
         <Popover>
           <PopoverTrigger asChild>
             <Button

@@ -48,7 +48,6 @@ export function BackgroupAnimation() {
         </Canvas>
       ) : (
         <Canvas camera={{ position: [0, 0, 1] }}>
-          <Stars />
           <Sky />
         </Canvas>
       )}
