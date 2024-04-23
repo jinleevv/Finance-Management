@@ -20,9 +20,11 @@ const ViewBankTransactionLists = () => {
       <Navbar />
       <Card className="lg:w-[950px] sm:w-full m-auto lg:mt-24 sm:mt-5">
         <CardContent className="mt-5">
-          <Button variant="outline" onClick={handleCancel} size="sm">
-            <ArrowLeftIcon />
-          </Button>
+          <div className="flex justify-end -mb-2">
+            <Button variant="outline" onClick={handleCancel} size="sm">
+              <ArrowLeftIcon />
+            </Button>
+          </div>
           <BankDataTable columns={BankColumns} data={bankTableData} />
         </CardContent>
       </Card>

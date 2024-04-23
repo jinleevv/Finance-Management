@@ -137,10 +137,7 @@ export function DownloadTransaction({
             </PopoverContent>
           </Popover>
         </div>
-        <CardFooter className="w-full mt-3 -ml-6 justify-between">
-          <Button variant="outline" onClick={handleCancel}>
-            Cancel
-          </Button>
+        <CardFooter className="w-full mt-3 -ml-6 justify-end">
           <Button
             onClick={handleClick}
             className="lg:-mr-7 sm:-mr-12 xsm:-mr-12"

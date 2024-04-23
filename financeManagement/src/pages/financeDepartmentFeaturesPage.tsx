@@ -94,7 +94,7 @@ const FinanceDepartmentFeatures = () => {
       <div className="w-full h-full m-auto">
         <Navbar />
         <div className="h-full">
-          <Card className="lg:w-1/2 sm:w-full m-auto lg:mt-28 sm:mt-0 shadow-xl">
+          <Card className="lg:w-1/2 sm:w-full m-auto lg:mt-28 sm:mt-0 shadow-xl rounded-3xl">
             <CardHeader>
               <div className="flex justify-between">
                 <CardTitle>What would you like to perform?</CardTitle>
@@ -127,9 +127,11 @@ const FinanceDepartmentFeatures = () => {
               <Toaster richColors closeButton />
             </CardContent>
             <CardFooter>
-              <Button className="justify-end" onClick={handleMainPage}>
-                Main Page
-              </Button>
+              <div className="w-full flex justify-end">
+                <Button className="justify-end" onClick={handleMainPage}>
+                  Main Page
+                </Button>
+              </div>
             </CardFooter>
           </Card>
         </div>

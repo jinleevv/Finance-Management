@@ -544,10 +544,7 @@ const TaxTransactionForm = () => {
                 </div>
               </div>
             </div>
-            <div className="mt-3 flex justify-between">
-              <Button variant="outline" onClick={handleCancel}>
-                Cancel
-              </Button>
+            <div className="mt-3 flex justify-end">
               <Dialog>
                 <DialogTrigger asChild>
                   <Button onClick={handleFormValues}>Submit</Button>
