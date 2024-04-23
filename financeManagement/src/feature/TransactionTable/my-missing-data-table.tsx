@@ -22,6 +22,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useHooks } from "@/hooks";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 interface DataTableProps<TableData, TValue> {
   columns: ColumnDef<TableData, TValue>[];
@@ -54,15 +55,19 @@ export function MyMissingDataTable<TData, TValue>({
   });
 
   function handleSelect() {
-    const data: any = table.getFilteredSelectedRowModel().rows[0].original;
-    const userData = {
-      trans_date: data["trans_date"],
-      billing_amount: data["billing_amount"],
-      merchant_name: data["merchant_name"],
-      first_name: data["first_name"],
-      last_name: data["last_name"],
-    };
-    setForceMatchUserData(userData);
+    if (table.getFilteredSelectedRowModel().rows.length !== 1) {
+      toast("Plesae select a single row to force match");
+    } else {
+      const data: any = table.getFilteredSelectedRowModel().rows[0].original;
+      const userData = {
+        trans_date: data["trans_date"],
+        billing_amount: data["billing_amount"],
+        merchant_name: data["merchant_name"],
+        first_name: data["first_name"],
+        last_name: data["last_name"],
+      };
+      setForceMatchUserData(userData);
+    }
   }
 
   return (

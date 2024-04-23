@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -21,6 +21,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useHooks } from "@/hooks";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 interface DataTableProps<TableData, TValue> {
   columns: ColumnDef<TableData, TValue>[];
@@ -53,16 +54,20 @@ export function MyMissingBankDataTable<TData, TValue>({
   });
 
   function handleSelect() {
-    const data: any = table.getFilteredSelectedRowModel().rows[0].original;
-    const bankData = {
-      trans_date: data["trans_date"],
-      post_date: data["post_date"],
-      billing_amount: data["billing_amount"],
-      merchant_name: data["merchant_name"],
-      first_name: data["first_name"],
-      last_name: data["last_name"],
-    };
-    setForceMatchBankData(bankData);
+    if (table.getFilteredSelectedRowModel().rows.length !== 1) {
+      toast("Plesae select a single row to force match");
+    } else {
+      const data: any = table.getFilteredSelectedRowModel().rows[0].original;
+      const bankData = {
+        trans_date: data["trans_date"],
+        post_date: data["post_date"],
+        billing_amount: data["billing_amount"],
+        merchant_name: data["merchant_name"],
+        first_name: data["first_name"],
+        last_name: data["last_name"],
+      };
+      setForceMatchBankData(bankData);
+    }
   }
 
   return (

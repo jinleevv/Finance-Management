@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { MyMissingDataTable } from "./TransactionTable/my-missing-data-table";
 import { MyMissingBankDataTable } from "./TransactionTable/my-missing-bank-data-table";
 import { MyMatchingDataTable } from "./TransactionTable/my-matching-data-table";
+import { Toaster, toast } from "sonner";
 
 const ViewMissingTransactions = () => {
   const {
@@ -16,6 +17,7 @@ const ViewMissingTransactions = () => {
     matchingTableData,
     forceMatchBankData,
     forceMatchUserData,
+    clientI,
   } = useHooks();
   const navigate = useNavigate();
 
@@ -23,9 +25,22 @@ const ViewMissingTransactions = () => {
     navigate("/main");
   }
 
-  function handleForceMatch() {
-    console.log(forceMatchBankData);
-    console.log(forceMatchUserData);
+  async function handleForceMatch() {
+    await clientI
+      .post(
+        "/api/force-match/",
+        { user: forceMatchUserData, bank: forceMatchBankData },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          toast("Force Match Completed, please re-load to see the changes");
+        } else if (res.status === 204) {
+          toast("Failed To Force Match");
+        }
+      });
   }
 
   return (
@@ -34,6 +49,7 @@ const ViewMissingTransactions = () => {
         <div className="lg:w-full h-5/6">
           <Card className="h-full m-auto mt-1">
             <CardContent className="mt-5">
+              <Toaster />
               <div className="w-full">
                 <div className="w-full">
                   <Button variant="outline" onClick={handleCancel} size="sm">
