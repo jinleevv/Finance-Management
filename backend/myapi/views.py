@@ -434,3 +434,27 @@ class FilterByDates(APIView):
         my_data = list(filtered_data.values())
 
         return JsonResponse(my_data, safe=False, status=status.HTTP_200_OK)
+    
+class ForceMatch(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = (SessionAuthentication,)  
+
+    def post(self, request):
+        try:
+            data = request.data
+
+            old_trans_date = datetime.strptime(data['user']['trans_date'], "%Y-%m-%d")
+            new_trans_date = datetime.strptime(data['bank']['trans_date'], "%Y-%m-%d")
+            first_name = data['user']['first_name']
+            last_name = data['user']['last_name']
+
+            modify_data = TaxTransactionForm.objects.get(trans_date=old_trans_date, first_name=first_name.upper(), last_name=last_name.upper())
+            modify_data.trans_date = new_trans_date
+            modify_data.save()
+
+            return Response({'message': 'Successfully Completed'}, status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            return Response({'message': 'Failed To Force Match'}, status=status.HTTP_204_NO_CONTENT)
+
+        
