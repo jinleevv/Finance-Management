@@ -27,6 +27,23 @@ export type BankTableData = {
   last_name: string;
 };
 
+export type ForceUserData = {
+  trans_date: string;
+  billing_amount: number;
+  merchant_name: string;
+  first_name: string;
+  last_name: string;
+};
+
+export type ForceBankData = {
+  trans_date: string;
+  post_date: string;
+  billing_amount: number;
+  merchant_name: string;
+  first_name: string;
+  last_name: string;
+};
+
 const logedInUserAtom = atomWithImmer<boolean>(false);
 const userFirstNameAtom = atomWithImmer<string>("");
 const userLastNameAtom = atomWithImmer<string>("");
@@ -38,20 +55,35 @@ const bankTableDataAtom = atomWithImmer<Array<BankTableData>>([]);
 const missingBankTableDataAtom = atomWithImmer<Array<BankTableData>>([]);
 const matchingTransactionsDataAtom = atomWithImmer<Array<BankTableData>>([]);
 const departmentAtom = atomWithImmer<string>("");
+const forceMatchUser = atomWithImmer<ForceUserData>({
+  trans_date: "",
+  billing_amount: -1,
+  merchant_name: "",
+  first_name: "",
+  last_name: "",
+});
+const forceMatchBank = atomWithImmer<ForceBankData>({
+  trans_date: "",
+  post_date: "",
+  billing_amount: -1,
+  merchant_name: "",
+  first_name: "",
+  last_name: "",
+});
 
 export function useHooks() {
   const clientI = axios.create({
-    // baseURL: "http://127.0.0.1:8000",
+    baseURL: "http://127.0.0.1:8000",
     // baseURL: "http://card.ultiumcam.local:8000",
-    baseURL: "http://192.168.3.248:8000",
+    // baseURL: "http://192.168.3.248:8000",
   });
   const clientII = axios.create({
-    // baseURL: "http://localhost:8000",
+    baseURL: "http://localhost:8000",
     // baseURL: "http://127.0.0.1:8000",
-    baseURL: "http://card.ultiumcam.local:8000",
+    // baseURL: "http://card.ultiumcam.local:8000",
   });
-  // const urlII = "http://localhost:8000";
-  const urlII = "http://card.ultiumcam.local:8000";
+  const urlII = "http://localhost:8000";
+  // const urlII = "http://card.ultiumcam.local:8000";
 
   const [logedInUser, setLogedInUser] = useAtom(logedInUserAtom);
   const [userName, setUserName] = useAtom(userNameAtom);
@@ -68,6 +100,8 @@ export function useHooks() {
     matchingTransactionsDataAtom
   );
   const [department, setDepartment] = useAtom(departmentAtom);
+  const [forceMatchUserData, setForceMatchUserData] = useAtom(forceMatchUser);
+  const [forceMatchBankData, setForceMatchBankData] = useAtom(forceMatchBank);
 
   return {
     clientI,
@@ -95,5 +129,9 @@ export function useHooks() {
     setMatchingTableData,
     department,
     setDepartment,
+    forceMatchUserData,
+    setForceMatchUserData,
+    forceMatchBankData,
+    setForceMatchBankData,
   };
 }
