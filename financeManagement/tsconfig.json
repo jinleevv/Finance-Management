@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": ["ES2020", "DOM", "DOM.Iterable", "ES2021.String"],
     "module": "ESNext",
     "skipLibCheck": true,
 
@@ -24,11 +24,8 @@
     /* shadcn/ui */
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     }
-    
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

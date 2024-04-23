@@ -145,11 +145,11 @@ const TaxTransactionForm = () => {
       data.append("tps", values.tps);
       data.append("tvq", values.tvq);
       data.append("merchant_name", values.merchant_name);
-      data.append("purpose", values.purpose);
+      data.append("purpose", values.purpose.replaceAll("\n", ", "));
       data.append("first_name", userFirstName);
       data.append("last_name", userLastName);
       data.append("category", values.category);
-      data.append("attendees", values.attendees);
+      data.append("attendees", values.attendees.replaceAll("\n", ", "));
       data.append("project", values.project);
 
       await clientI
