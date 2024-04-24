@@ -150,13 +150,6 @@ class DownloadTransactions(APIView):
             bank_lists_set = set((obj.billing_amount, obj.trans_date, obj.first_name, obj.last_name) for obj in bank_lists)
 
             common_elements = transactions_set.intersection(bank_lists_set)
-            
-            common_bank_lists = BankTransactionList.objects.filter(
-                billing_amount__in=[amount for amount, date, first_name, last_name in common_elements],
-                trans_date__in=[date for amount, date, first_name, last_name in common_elements],
-                first_name__in = [first_name for amount, date, first_name, last_name in common_elements],
-                last_name__in = [last_name for amount, date, first_name, last_name in common_elements],
-            )
 
             common_transaction_lists = TaxTransactionForm.objects.filter(
                 billing_amount__in=[amount for amount, date, first_name, last_name in common_elements],
@@ -166,7 +159,7 @@ class DownloadTransactions(APIView):
             )
 
             common_data = []
-            for obj1, obj2 in zip(common_transaction_lists, common_bank_lists):
+            for obj1 in common_transaction_lists:
                 if department in constructions:
                     if obj1.category == 'Business Trip(Hotel,Food,Gas,Parking,Toll,Trasportation)':
                         account = construction_options[0]
@@ -193,15 +186,20 @@ class DownloadTransactions(APIView):
                         account = general_options[4]
                     else:
                         account = ""
+                try:
+                    obj2 = BankTransactionList.objects.get(trans_date=obj1.trans_date, billing_amount=obj1.billing_amount, first_name=obj1.first_name, last_name=obj1.last_name)
+                except Exception as e:
+                    obj2 = BankTransactionList.objects.filter(trans_date=obj1.trans_date, billing_amount=obj1.billing_amount, first_name=obj1.first_name, last_name=obj1.last_name)
+                    obj2 = obj2[0]
 
                 obj_dict = {
-                    'Trans Date': obj1.trans_date,
+                    'Trans Date': obj2.trans_date,
                     'Post Date': obj2.post_date,
-                    'Merchant Name': obj1.merchant_name,
-                    'Billing Amount': obj1.billing_amount,
+                    'Merchant Name': obj2.merchant_name,
+                    'Billing Amount': obj2.billing_amount,
                     'TPS(GST)': obj1.tps,
                     'TVQ(QST)': obj1.tvq,
-                    'Taxable Amount': obj1.billing_amount - (obj1.tps + obj1.tvq),
+                    'Taxable Amount': obj2.billing_amount - (obj1.tps + obj1.tvq),
                     'Purpose': obj1.purpose,
                     'Category': obj1.category,
                     'Account': account,
