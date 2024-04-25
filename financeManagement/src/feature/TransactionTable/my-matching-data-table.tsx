@@ -18,7 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { addDays, format } from "date-fns";
+import { addDays, format, startOfMonth } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 import { cn } from "@/lib/utils";
@@ -54,8 +54,8 @@ export function MyMatchingDataTable<TData, TValue>({
     []
   );
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(),
-    to: addDays(new Date(), 3),
+    from: startOfMonth(new Date()),
+    to: new Date(),
   });
 
   const table = useReactTable({

@@ -23,8 +23,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useHooks } from "@/hooks";
-import axios from "axios";
-import { addDays, format } from "date-fns";
+import { addDays, format, startOfMonth } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 import { cn } from "@/lib/utils";
@@ -34,7 +33,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import JSZip from "jszip";
 import { saveAs } from "file-saver";
 
 interface DataTableProps<TableData, TValue> {
@@ -46,20 +44,14 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  const {
-    clientI,
-    clientII,
-    urlII,
-    userFirstName,
-    userLastName,
-    setTableData,
-  } = useHooks();
+  const { clientI, clientII, userFirstName, userLastName, setTableData } =
+    useHooks();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [date, setDate] = useState<DateRange | undefined>({
-    from: new Date(),
-    to: addDays(new Date(), 3),
+    from: startOfMonth(new Date()),
+    to: new Date(),
   });
 
   const table = useReactTable({
