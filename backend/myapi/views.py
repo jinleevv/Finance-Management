@@ -13,6 +13,7 @@ from django.http import HttpRequest, JsonResponse, HttpResponse
 import pandas as pd
 from django.conf import settings
 import os
+import shutil
 
 class SessionStatus(APIView):
     permission_classes = ()
@@ -311,17 +312,38 @@ class DeleteBankTransactions(APIView):
 class DownloadReciptImages(APIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = (SessionAuthentication,)
-    def get(self, request, filename):
-        file_path = os.path.join(settings.MEDIA_ROOT, "uploads/" , filename)
+    def post(self, request):
+        filenames = request.data.get('filenames')
 
-        if os.path.exists(file_path):
-            with open(file_path, 'rb') as file:
-                response = HttpResponse(file.read(), content_type='application/octet-stream')
-                response['Content-Disposition'] = f'attachment; filename="{filename}"'
-            return response
-        else:
-            # If file does not exist, return a 400 bad request status
-            return HttpResponse('File not found', status=status.HTTP_400_BAD_REQUEST)
+        if not filenames:
+            return JsonResponse({"error": "No filenames provided"}, status=status.HTTP_400_BAD_REQUEST)
+         
+        # Assuming you have a model where the filenames are stored
+        files = TaxTransactionForm.objects.filter(img__in=filenames)
+
+        current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        temp_dir = os.path.join(settings.MEDIA_ROOT, f'temp_images_{current_time}')
+        os.makedirs(temp_dir, exist_ok=True)
+
+        for file in files:
+            source_path = os.path.join(settings.MEDIA_ROOT, file.img.name)
+            shutil.copy2(source_path, temp_dir)
+
+        zip_file_path = shutil.make_archive(f'images_{current_time}', 'zip', temp_dir)
+
+        # Open the zip file and read its content
+        with open(zip_file_path, 'rb') as zip_file:
+            zip_content = zip_file.read()
+
+        # Return the zip file content as the response
+        response = HttpResponse(zip_content, content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename="images.zip"'
+
+        os.remove(zip_file_path)
+        shutil.rmtree(temp_dir)
+
+        return response
         
 class MyMissingTransactionLists(APIView):
     permission_classes = (permissions.AllowAny,)

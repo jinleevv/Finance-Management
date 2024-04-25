@@ -134,42 +134,33 @@ export function DataTable<TData, TValue>({
 
   async function handleDownloadImage() {
     const data = table.getFilteredSelectedRowModel().rows;
-    const todayDate = new Date();
-    const todayDateString = todayDate.toISOString().split("T")[0];
-    const zip = new JSZip();
-    const imagesFolder = zip.folder(`images_${todayDateString}`);
 
-    const downloadPromises: Promise<void>[] = [];
+    if (data.length < 1) {
+      toast("Please select at least one data to download image(s)");
+    } else {
+      const todayDate = new Date();
+      const todayDateString = todayDate.toISOString().split("T")[0];
+      const filenames = data.map((element: any) => element.original["img"]);
 
-    data.forEach((element) => {
-      let filename = element.original["img"];
-      const url = urlII + "/api/download/" + filename;
+      try {
+        const response = await clientI
+          .post(
+            "/api/receipt-download/",
+            {
+              filenames: filenames,
+            },
+            { responseType: "blob" }
+          )
+          .catch(() => {
+            toast("Error downloading images:");
+          });
 
-      downloadPromises.push(
-        axios
-          .get(url, { responseType: "blob" })
-          .then((response) => {
-            // Add the image blob to the zip file
-            imagesFolder.file(filename.replace("uploads/", ""), response.data);
-          })
-          .catch((error) => {
-            toast(`Error downloading image ${filename}:`, error);
-            // Handle error, e.g., display an error message to the user
-          })
-      );
-    });
-    // Wait for all promises to resolve
-    Promise.all(downloadPromises)
-      .then(() => {
-        // Generate the zip file
-        return zip.generateAsync({ type: "blob" });
-      })
-      .then((content) => {
-        saveAs(content, `images_${todayDateString}.zip`);
-      })
-      .catch((error) => {
-        toast("Error downloading images:", error);
-      });
+        const blob = new Blob([response.data], { type: "application/zip" });
+        saveAs(blob, `images_${todayDateString}.zip`);
+      } catch (error) {
+        toast("Error downloading images");
+      }
+    }
   }
 
   return (
