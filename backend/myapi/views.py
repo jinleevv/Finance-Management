@@ -161,7 +161,11 @@ class DownloadTransactions(APIView):
                     item = TaxTransactionForm.objects.get(trans_date=obj[1], billing_amount=obj[0], first_name=obj[2], last_name=obj[3])
                 except Exception as e:
                     items = TaxTransactionForm.objects.filter(trans_date=obj[1], billing_amount=obj[0], first_name=obj[2], last_name=obj[3])
-                    item = items[0]
+                    
+                    for i in range(len(items)):
+                        common_transaction_lists.append(items[i])
+                    
+                    continue
 
                 common_transaction_lists.append(item)
 
