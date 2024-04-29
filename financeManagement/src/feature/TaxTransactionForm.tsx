@@ -75,7 +75,7 @@ const formSchema = z.object({
 
 const TaxTransactionForm = () => {
   const nativate = useNavigate();
-  const { clientI, userFirstName, userLastName } = useHooks();
+  const { clientI, userFirstName, userLastName, department } = useHooks();
   const [checked, setChecked] = useState(false);
   const [submitValuesElement, setSubmitValuesElement] = useState(<div></div>);
   const today = new Date();
@@ -151,6 +151,7 @@ const TaxTransactionForm = () => {
       data.append("category", values.category);
       data.append("attendees", values.attendees.replaceAll("\n", ", "));
       data.append("project", values.project);
+      data.append("department", department);
 
       await clientI
         .post("/api/card-transaction-upload/", data, {
@@ -334,6 +335,10 @@ const TaxTransactionForm = () => {
                                   </DropdownMenuRadioItem>
                                   <DropdownMenuRadioItem value="Banking Fees">
                                     Banking Fees
+                                  </DropdownMenuRadioItem>
+                                  <DropdownMenuRadioItem value="Car Expenses (Gas, Maintenance, Parking, Toll)">
+                                    Car Expenses (Gas, Maintenance, Parking,
+                                    Toll)
                                   </DropdownMenuRadioItem>
                                   <DropdownMenuRadioItem value="Others(Ask Finance Department)">
                                     Others (Ask Finance Department)

@@ -44,7 +44,6 @@ export function DownloadTransaction({
       const data = JSON.stringify({
         date_from: date.from.toISOString().split("T")[0],
         date_to: date.to.toISOString().split("T")[0],
-        department: department,
       });
 
       await clientI
@@ -83,7 +82,7 @@ export function DownloadTransaction({
           }
         });
     } catch (err) {
-      toast("Something went wront");
+      toast("Something went wront, please contact IT department");
     }
   }
 

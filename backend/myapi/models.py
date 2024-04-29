@@ -57,10 +57,10 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
 
 
 class TaxTransactionFormManager(models.Manager):
-    def create_transaction(self, trans_date, billing_amount, tps, tvq, merchant_name, category, purpose, img, first_name, last_name, project, attendees):
+    def create_transaction(self, trans_date, billing_amount, tps, tvq, merchant_name, category, purpose, img, first_name, last_name, project, attendees, department):
         transaction = self.create(trans_date=trans_date, billing_amount=billing_amount, tps=tps, tvq=tvq,
                                 merchant_name=merchant_name, category=category, purpose=purpose,img=img,
-                                first_name=first_name, last_name=last_name, project=project, attendees=attendees)
+                                first_name=first_name, last_name=last_name, project=project, attendees=attendees, department=department)
 
         return transaction
 
@@ -77,14 +77,15 @@ class TaxTransactionForm(models.Model):
     last_name = models.CharField(max_length=100, default="")
     project = models.CharField(max_length=50, default="")
     attendees = models.CharField(max_length=100, default="")
+    department = models.CharField(max_length=100, default="")
 
     objects = TaxTransactionFormManager()
 
     @classmethod
-    def create(cls, trans_date, billing_amount, tps, tvq, merchant_name, category, purpose, img, first_name, last_name, project, attendees):
+    def create(cls, trans_date, billing_amount, tps, tvq, merchant_name, category, purpose, img, first_name, last_name, project, attendees, department):
         transaction = cls(trans_date=trans_date, billing_amount=billing_amount, tps=tps, tvq=tvq,
                         merchant_name=merchant_name, category=category, purpose=purpose,img=img,
-                        first_name=first_name, last_name=last_name, project=project, attendees=attendees)
+                        first_name=first_name, last_name=last_name, project=project, attendees=attendees, department=department)
         return transaction
 
     class Meta:

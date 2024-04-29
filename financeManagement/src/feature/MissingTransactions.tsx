@@ -34,7 +34,7 @@ const ViewMissingTransactions = () => {
           headers: { "Content-Type": "application/json" },
         }
       )
-      .then((res) => {
+      .then((res : any) => {
         if (res.status === 200) {
           toast("Force Match Completed, please re-load to see the changes");
         } else if (res.status === 204) {

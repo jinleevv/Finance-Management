@@ -111,6 +111,7 @@ class CardTransactionUpload(APIView):
                 img=data['file'],
                 project=data['project'],
                 attendees=data['attendees'],
+                department=data['department'],
             )
             return Response({'message': 'Transaction created successfully'})
 
@@ -139,10 +140,12 @@ class DownloadTransactions(APIView):
         data = request.data
         date_from = data.get('date_from')
         date_to = data.get('date_to')
-        department = data.get('department')
+        department_info = {'SOONKI JEONG' : 'IT Security', 'JUNGHOON HA': 'Contruction Operation', 'JONGHOON LEE' : 'Finance', 'HWA SUNG KANG' : 'Procurement', 'WEON-KU YEO': 'Contruction Operation', 'CHI GYU CHA': 'President'}
+        department_info_names = department_info.keys()
+
         constructions = ['Procurement', 'Contruction Operation']
-        construction_options = ['12395202 Construction in progress_travel expenses', '12395213 Construction in progress_entertainment expenses', '12395201 Construction in progress_welfare expenses', '12395224 Construction in progress_conference expenses', '52216111 Bank charges']
-        general_options = ['52202101 Travel', '52212102 Selling and administrative expenses_entertainment expenses_employees', '52201123 Selling and administrative expenses, welfare expenses, supporting discussion', '52224102 Selling and administrative expenses_conference expenses_employees', '52216111 Bank charges']
+        construction_options = ['12395202 Construction in progress_travel expenses', '12395213 Construction in progress_entertainment expenses', '12395201-1 Construction in progress_welfare expenses_supporting discussion', '12395224 Construction in progress_conference expenses', '52216111 Bank charges', '12395221 Construction in progress_vehicles expenses']
+        general_options = ['52202101 Travel', '52212102 Selling and administrative expenses_entertainment expenses_employees', '52201123 Selling and administrative expenses, welfare expenses, supporting discussion', '52224102 Selling and administrative expenses_conference expenses_employees', '52216111 Bank charges', '52221199 Car expenses']
         try:
             transactions = TaxTransactionForm.objects.filter(trans_date__range=(date_from, date_to))
             bank_lists = BankTransactionList.objects.filter(trans_date__range=(date_from, date_to))
@@ -152,15 +155,22 @@ class DownloadTransactions(APIView):
 
             common_elements = transactions_set.intersection(bank_lists_set)
 
-            common_transaction_lists = TaxTransactionForm.objects.filter(
-                billing_amount__in=[amount for amount, date, first_name, last_name in common_elements],
-                trans_date__in=[date for amount, date, first_name, last_name in common_elements],
-                first_name__in = [first_name for amount, date, first_name, last_name in common_elements],
-                last_name__in = [last_name for amount, date, first_name, last_name in common_elements],
-            )
+            common_transaction_lists = []
+            for obj in common_elements:
+                try:
+                    item = TaxTransactionForm.objects.get(trans_date=obj[1], billing_amount=obj[0], first_name=obj[2], last_name=obj[3])
+                except Exception as e:
+                    items = TaxTransactionForm.objects.filter(trans_date=obj[1], billing_amount=obj[0], first_name=obj[2], last_name=obj[3])
+                    item = items[0]
+
+                common_transaction_lists.append(item)
 
             common_data = []
             for obj1 in common_transaction_lists:
+                full_name = obj1.first_name.upper() + obj1.last_name.upper()
+                if full_name in department_info_names:
+                    department = department_info[full_name]
+
                 if department in constructions:
                     if obj1.category == 'Business Trip(Hotel,Food,Gas,Parking,Toll,Trasportation)':
                         account = construction_options[0]
@@ -172,6 +182,8 @@ class DownloadTransactions(APIView):
                         account = construction_options[3]
                     elif obj1.category == 'Banking Fees':
                         account = construction_options[4]
+                    elif obj1.category == 'Car Expenses (Gas, Maintenance, Parking, Toll)':
+                        account = construction_options[5]
                     else:
                         account = ""
                 else:
@@ -185,6 +197,8 @@ class DownloadTransactions(APIView):
                         account = general_options[3]
                     elif obj1.category == 'Banking Fees':
                         account = general_options[4]
+                    elif obj1.category == 'Car Expenses (Gas, Maintenance, Parking, Toll)':
+                        account = general_options[5]
                     else:
                         account = ""
                 try:
@@ -467,14 +481,15 @@ class ForceMatch(APIView):
             new_trans_date = datetime.strptime(data['bank']['trans_date'], "%Y-%m-%d")
             first_name = data['user']['first_name']
             last_name = data['user']['last_name']
+            billing_amount = data['user']['billing_amount']
 
-            modify_data = TaxTransactionForm.objects.get(trans_date=old_trans_date, first_name=first_name.upper(), last_name=last_name.upper())
+            modify_data = TaxTransactionForm.objects.get(trans_date=old_trans_date, billing_amount=billing_amount, first_name=first_name.upper(), last_name=last_name.upper())
             modify_data.trans_date = new_trans_date
             modify_data.save()
 
             return Response({'message': 'Successfully Completed'}, status=status.HTTP_200_OK)
         
         except Exception as e:
-            return Response({'message': 'Failed To Force Match'}, status=status.HTTP_204_NO_CONTENT)
+            return Response({'message': f'{e}'}, status=status.HTTP_204_NO_CONTENT)
 
         
