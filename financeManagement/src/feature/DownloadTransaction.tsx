@@ -29,7 +29,7 @@ export function DownloadTransaction({
   className,
 }: React.HTMLAttributes<HTMLDivElement>) {
   const navigate = useNavigate();
-  const { clientI, department } = useHooks();
+  const { clientI } = useHooks();
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: new Date(),
     to: addDays(new Date(), 20),
