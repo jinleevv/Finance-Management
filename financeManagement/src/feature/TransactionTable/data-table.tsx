@@ -9,7 +9,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
 import {
   Table,
   TableBody,
@@ -23,7 +22,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useHooks } from "@/hooks";
-import { addDays, format, startOfMonth } from "date-fns";
+import { format, startOfMonth } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 import { cn } from "@/lib/utils";
@@ -34,6 +33,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { saveAs } from "file-saver";
+import { EditTransactionInformation } from "@/feature/EditTransactionInformation";
 
 interface DataTableProps<TableData, TValue> {
   columns: ColumnDef<TableData, TValue>[];
@@ -124,6 +124,10 @@ export function DataTable<TData, TValue>({
       });
   }
 
+  function handleEditError() {
+    toast("Please only select one item");
+  }
+
   async function handleDownloadImage() {
     const data = table.getFilteredSelectedRowModel().rows;
 
@@ -206,6 +210,15 @@ export function DataTable<TData, TValue>({
           <Button variant="outline" onClick={handleDownloadImage}>
             Download Images
           </Button>
+          {table.getFilteredSelectedRowModel().rows.length === 1 ? (
+            <EditTransactionInformation
+              data={table.getFilteredSelectedRowModel().rows}
+            />
+          ) : (
+            <Button onClick={handleEditError} variant="outline">
+              Edit
+            </Button>
+          )}
           <Button variant="outline" onClick={handleDelete}>
             Delete
           </Button>
@@ -213,7 +226,7 @@ export function DataTable<TData, TValue>({
       </div>
       <div className="flex first-line:rounded-md border">
         <Table>
-          <ScrollArea className="w-full h-[400px]">
+          <ScrollArea className="w-full lg:h-[600px] sm:h-[400px] xsm:h-[400px]">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>

@@ -496,4 +496,57 @@ class ForceMatch(APIView):
         except Exception as e:
             return Response({'message': f'{e}'}, status=status.HTTP_204_NO_CONTENT)
 
+class EditTransactionInformation(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = (SessionAuthentication,)  
+
+    def post(self, request):
+        try:
+            data = request.data
+            
+            original_data = data['original']
+
+            original_trans_date = datetime.strptime(original_data.get('trans_date'), "%Y-%m-%d")
+            original_billing_amount = original_data.get('billing_amount')
+            original_merchant_name = original_data.get('merchant_name')
+            original_tps = original_data.get('tps')
+            original_tvq = original_data.get('tvq')
+            original_first_name = original_data.get('first_name')
+            original_last_name = original_data.get('last_name')
+
+            edit_data = data['edit']
+
+            new_trans_date = datetime.strptime(edit_data.get('trans_date'), "%Y-%m-%d")
+            new_billing_amount = edit_data.get('billing_amount')
+            new_category = edit_data.get('category')
+            new_tps = edit_data.get('tps')
+            new_tvq = edit_data.get('tvq')
+            new_merchant_name = edit_data.get('merchant_name')
+            new_project = edit_data.get('project')
+            new_purpose = edit_data.get('purpose')
+            new_attendees = edit_data.get('attendees')
+
+            modify_data = TaxTransactionForm.objects.get(trans_date=original_trans_date, billing_amount=original_billing_amount, merchant_name=original_merchant_name,
+                                                        tps=original_tps, tvq=original_tvq, first_name=original_first_name.upper(), last_name=original_last_name.upper())
+
+            modify_data.trans_date = new_trans_date
+            modify_data.billing_amount = new_billing_amount
+            modify_data.category = new_category
+            modify_data.tps = new_tps
+            modify_data.tvq = new_tvq
+            modify_data.merchant_name = new_merchant_name
+            modify_data.project = new_project
+            modify_data.purpose = new_purpose
+            modify_data.attendees = new_attendees
+
+            modify_data.save()
+
+            my_data = TaxTransactionForm.objects.filter(first_name=original_first_name.upper(), last_name=original_last_name.upper())
+            data_list = list(my_data.values())
+
+            return JsonResponse(data_list, safe=False, status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            print(e)
+            return Response({'message': f'{e}'}, status=status.HTTP_204_NO_CONTENT)
         

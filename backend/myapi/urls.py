@@ -20,4 +20,5 @@ urlpatterns = [
     path('matching-transaction-lists/', views.MyMatchingTransactionLists.as_view(), name='my-missing-bank-transaction-lists'),
     path('filter-by-dates/', views.FilterByDates.as_view(), name='filter-by-dates'),
     path('force-match/', views.ForceMatch.as_view(), name='force-match'),
+    path('edit-transaction-information/', views.EditTransactionInformation.as_view(), name='edit-transaction-info'),
 ]

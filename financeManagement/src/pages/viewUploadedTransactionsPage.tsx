@@ -18,17 +18,18 @@ const ViewUploadedTransactionsPage = () => {
   return (
     <div className="w-full h-full">
       <Navbar />
-      <Card className="lg:w-[950px] sm:w-full xsm:w-full m-auto lg:mt-24 sm:mt-0 xsm:mt-0">
-        <CardContent className="mt-5">
-          <div className="lg:flex mb-3 w-full justify-end">
-            <Button variant="outline" onClick={handleCancel} size="sm">
-              <ArrowLeftIcon />
-            </Button>
-          </div>
-
-          <DataTable columns={columns} data={tableData} />
-        </CardContent>
-      </Card>
+      <div className="w-full lg:p-7">
+        <Card className="sm:w-full xsm:w-full m-auto sm:mt-0 xsm:mt-0">
+          <CardContent className="mt-5">
+            <div className="lg:flex mb-3 w-full justify-end">
+              <Button variant="outline" onClick={handleCancel} size="sm">
+                <ArrowLeftIcon />
+              </Button>
+            </div>
+            <DataTable columns={columns} data={tableData} />
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
