@@ -14,6 +14,7 @@ import pandas as pd
 from django.conf import settings
 import os
 import shutil
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 class SessionStatus(APIView):
     permission_classes = ()
@@ -141,95 +142,166 @@ class DownloadTransactions(APIView):
         date_from = data.get('date_from')
         date_to = data.get('date_to')
         department_info = {'SOONKI JEONG' : 'IT Security', 'JUNGHOON HA': 'Contruction Operation', 'JONGHOON LEE' : 'Finance', 'HWA SUNG KANG' : 'Procurement', 'WEON-KU YEO': 'Contruction Operation', 'CHI GYU CHA': 'President'}
-        department_info_names = department_info.keys()
+        department_info_names = list(department_info.keys())
 
         constructions = ['Procurement', 'Contruction Operation']
         construction_options = ['12395202 Construction in progress_travel expenses', '12395213 Construction in progress_entertainment expenses', '12395201-1 Construction in progress_welfare expenses_supporting discussion', '12395224 Construction in progress_conference expenses', '52216111 Bank charges', '12395221 Construction in progress_vehicles expenses']
         general_options = ['52202101 Travel', '52212102 Selling and administrative expenses_entertainment expenses_employees', '52201123 Selling and administrative expenses, welfare expenses, supporting discussion', '52224102 Selling and administrative expenses_conference expenses_employees', '52216111 Bank charges', '52221199 Car expenses']
+        
         try:
-            transactions = TaxTransactionForm.objects.filter(trans_date__range=(date_from, date_to))
-            bank_lists = BankTransactionList.objects.filter(trans_date__range=(date_from, date_to))
+            return_data = []
+            bank_lists = BankTransactionList.objects.filter(post_date__range=(date_from, date_to))
 
-            transactions_set = set((obj.billing_amount, obj.trans_date, obj.first_name, obj.last_name) for obj in transactions)
-            bank_lists_set = set((obj.billing_amount, obj.trans_date, obj.first_name, obj.last_name) for obj in bank_lists)
-
-            common_elements = transactions_set.intersection(bank_lists_set)
-
-            common_transaction_lists = []
-            for obj in common_elements:
+            for item in bank_lists:
                 try:
-                    item = TaxTransactionForm.objects.get(trans_date=obj[1], billing_amount=obj[0], first_name=obj[2], last_name=obj[3])
-                except Exception as e:
-                    items = TaxTransactionForm.objects.filter(trans_date=obj[1], billing_amount=obj[0], first_name=obj[2], last_name=obj[3])
-                    
-                    for i in range(len(items)):
-                        common_transaction_lists.append(items[i])
-                    
+                    match_item = TaxTransactionForm.objects.get(trans_date=item.trans_date, billing_amount=item.billing_amount, first_name=item.first_name.upper(), last_name=item.last_name.upper())
+                
+                except ObjectDoesNotExist:
                     continue
+                
+                except MultipleObjectsReturned:
+                    match_items = TaxTransactionForm.objects.filter(trans_date=item.trans_date, billing_amount=item.billing_amount, first_name=item.first_name.upper(), last_name=item.last_name.upper())    
+                    match_item = match_items[0]
 
-                common_transaction_lists.append(item)
-
-            common_data = []
-            for obj1 in common_transaction_lists:
-                full_name = obj1.first_name.upper() + obj1.last_name.upper()
+                department = ""
+                full_name = item.first_name.upper() + item.last_name.upper()
                 if full_name in department_info_names:
                     department = department_info[full_name]
-
+                    
                 if department in constructions:
-                    if obj1.category == 'Business Trip(Hotel,Food,Gas,Parking,Toll,Trasportation)':
+                    if match_item.category == 'Business Trip(Hotel,Food,Gas,Parking,Toll,Trasportation)':
                         account = construction_options[0]
-                    elif obj1.category == 'Meeting with Business Partners':
+                    elif match_item.category == 'Meeting with Business Partners':
                         account = construction_options[1]
-                    elif obj1.category == 'Meeting between employees':
-                        account = construction_options[2]
-                    elif obj1.category == 'Business Conference, Seminar, Workshop':
+                    elif match_item.category == 'Meeting between employees':
+                            account = construction_options[2]
+                    elif match_item.category == 'Business Conference, Seminar, Workshop':
                         account = construction_options[3]
-                    elif obj1.category == 'Banking Fees':
+                    elif match_item.category == 'Banking Fees':
                         account = construction_options[4]
-                    elif obj1.category == 'Car Expenses (Gas, Maintenance, Parking, Toll)':
+                    elif match_item.category == 'Car Expenses (Gas, Maintenance, Parking, Toll)':
                         account = construction_options[5]
                     else:
                         account = ""
                 else:
-                    if obj1.category == 'Business Trip(Hotel,Food,Gas,Parking,Toll,Trasportation)':
+                    if match_item.category == 'Business Trip(Hotel,Food,Gas,Parking,Toll,Trasportation)':
                         account = general_options[0]
-                    elif obj1.category == 'Meeting with Business Partners':
+                    elif match_item.category == 'Meeting with Business Partners':
                         account = general_options[1]
-                    elif obj1.category == 'Meeting between employees':
+                    elif match_item.category == 'Meeting between employees':
                         account = general_options[2]
-                    elif obj1.category == 'Business Conference, Seminar, Workshop':
+                    elif match_item.category == 'Business Conference, Seminar, Workshop':
                         account = general_options[3]
-                    elif obj1.category == 'Banking Fees':
+                    elif match_item.category == 'Banking Fees':
                         account = general_options[4]
-                    elif obj1.category == 'Car Expenses (Gas, Maintenance, Parking, Toll)':
+                    elif match_item.category == 'Car Expenses (Gas, Maintenance, Parking, Toll)':
                         account = general_options[5]
                     else:
                         account = ""
-                try:
-                    obj2 = BankTransactionList.objects.get(trans_date=obj1.trans_date, billing_amount=obj1.billing_amount, first_name=obj1.first_name, last_name=obj1.last_name)
-                except Exception as e:
-                    obj2 = BankTransactionList.objects.filter(trans_date=obj1.trans_date, billing_amount=obj1.billing_amount, first_name=obj1.first_name, last_name=obj1.last_name)
-                    obj2 = obj2[0]
-
-                obj_dict = {
-                    'Trans Date': obj2.trans_date,
-                    'Post Date': obj2.post_date,
-                    'Merchant Name': obj2.merchant_name,
-                    'Billing Amount': obj2.billing_amount,
-                    'TPS(GST)': obj1.tps,
-                    'TVQ(QST)': obj1.tvq,
-                    'Taxable Amount': obj2.billing_amount - (obj1.tps + obj1.tvq),
-                    'Purpose': obj1.purpose,
-                    'Category': obj1.category,
+                        
+                item_dict = {
+                    'Trans Date': item.trans_date,
+                    'Post Date': item.post_date,
+                    'Merchant Name': item.merchant_name,
+                    'Billing Amount': item.billing_amount,
+                    'TPS(GST)': match_item.tps,
+                    'TVQ(QST)': match_item.tvq,
+                    'Taxable Amount': item.billing_amount - (match_item.tps + match_item.tvq),
+                    'Purpose': match_item.purpose,
+                    'Category': match_item.category,
                     'Account': account,
-                    'Project': obj1.project,
-                    'Attendees:': obj1.attendees,
-                    'Full Name': obj1.first_name + " " + obj1.last_name,
+                    'Project': match_item.project,
+                    'Attendees:': match_item.attendees,
+                    'Full Name': item.first_name.upper() + " " + item.last_name.upper(),
                 }
                 
-                common_data.append(obj_dict)
+                return_data.append(item_dict)
             
-            return Response({'data': common_data})
+            return Response({'data': return_data})
+
+            # transactions = TaxTransactionForm.objects.filter(trans_date__range=(date_from, date_to))
+            # bank_lists = BankTransactionList.objects.filter(trans_date__range=(date_from, date_to))
+
+            # transactions_set = set((obj.billing_amount, obj.trans_date, obj.first_name, obj.last_name) for obj in transactions)
+            # bank_lists_set = set((obj.billing_amount, obj.trans_date, obj.first_name, obj.last_name) for obj in bank_lists)
+
+            # common_elements = transactions_set.intersection(bank_lists_set)
+
+            # common_transaction_lists = []
+            # for obj in common_elements:
+            #     try:
+            #         item = TaxTransactionForm.objects.get(trans_date=obj[1], billing_amount=obj[0], first_name=obj[2], last_name=obj[3])
+            #     except Exception as e:
+            #         items = TaxTransactionForm.objects.filter(trans_date=obj[1], billing_amount=obj[0], first_name=obj[2], last_name=obj[3])
+                    
+            #         for i in range(len(items)):
+            #             common_transaction_lists.append(items[i])
+                    
+            #         continue
+
+            #     common_transaction_lists.append(item)
+
+            # common_data = []
+            # for obj1 in common_transaction_lists:
+            #     full_name = obj1.first_name.upper() + obj1.last_name.upper()
+            #     if full_name in department_info_names:
+            #         department = department_info[full_name]
+
+            #     if department in constructions:
+            #         if obj1.category == 'Business Trip(Hotel,Food,Gas,Parking,Toll,Trasportation)':
+            #             account = construction_options[0]
+            #         elif obj1.category == 'Meeting with Business Partners':
+            #             account = construction_options[1]
+            #         elif obj1.category == 'Meeting between employees':
+            #             account = construction_options[2]
+            #         elif obj1.category == 'Business Conference, Seminar, Workshop':
+            #             account = construction_options[3]
+            #         elif obj1.category == 'Banking Fees':
+            #             account = construction_options[4]
+            #         elif obj1.category == 'Car Expenses (Gas, Maintenance, Parking, Toll)':
+            #             account = construction_options[5]
+            #         else:
+            #             account = ""
+            #     else:
+            #         if obj1.category == 'Business Trip(Hotel,Food,Gas,Parking,Toll,Trasportation)':
+            #             account = general_options[0]
+            #         elif obj1.category == 'Meeting with Business Partners':
+            #             account = general_options[1]
+            #         elif obj1.category == 'Meeting between employees':
+            #             account = general_options[2]
+            #         elif obj1.category == 'Business Conference, Seminar, Workshop':
+            #             account = general_options[3]
+            #         elif obj1.category == 'Banking Fees':
+            #             account = general_options[4]
+            #         elif obj1.category == 'Car Expenses (Gas, Maintenance, Parking, Toll)':
+            #             account = general_options[5]
+            #         else:
+            #             account = ""
+            #     try:
+            #         obj2 = BankTransactionList.objects.get(trans_date=obj1.trans_date, billing_amount=obj1.billing_amount, first_name=obj1.first_name, last_name=obj1.last_name)
+            #     except Exception as e:
+            #         obj2 = BankTransactionList.objects.filter(trans_date=obj1.trans_date, billing_amount=obj1.billing_amount, first_name=obj1.first_name, last_name=obj1.last_name)
+            #         obj2 = obj2[0]
+
+            #     obj_dict = {
+            #         'Trans Date': obj2.trans_date,
+            #         'Post Date': obj2.post_date,
+            #         'Merchant Name': obj2.merchant_name,
+            #         'Billing Amount': obj2.billing_amount,
+            #         'TPS(GST)': obj1.tps,
+            #         'TVQ(QST)': obj1.tvq,
+            #         'Taxable Amount': obj2.billing_amount - (obj1.tps + obj1.tvq),
+            #         'Purpose': obj1.purpose,
+            #         'Category': obj1.category,
+            #         'Account': account,
+            #         'Project': obj1.project,
+            #         'Attendees:': obj1.attendees,
+            #         'Full Name': obj1.first_name + " " + obj1.last_name,
+            #     }
+                
+            #     common_data.append(obj_dict)
+            
+            # return Response({'data': common_data})
 
         except Exception as e:
             return Response({ "message": f"error: {e}" })
