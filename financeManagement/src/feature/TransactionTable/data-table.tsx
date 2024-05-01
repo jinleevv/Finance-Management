@@ -226,7 +226,7 @@ export function DataTable<TData, TValue>({
       </div>
       <div className="flex first-line:rounded-md border">
         <Table>
-          <ScrollArea className="w-full lg:h-[600px] sm:h-[400px] xsm:h-[400px]">
+          <ScrollArea className="w-full lg:h-[550px] sm:h-[400px] xsm:h-[400px]">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
