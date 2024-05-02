@@ -171,6 +171,25 @@ class DownloadTransactions(APIView):
                     match_item = TaxTransactionForm.objects.get(trans_date=item.trans_date, billing_amount=item.billing_amount, first_name=item.first_name.upper(), last_name=item.last_name.upper())
                 
                 except ObjectDoesNotExist:
+                    item_dict = {
+                    'Trans Date': item.trans_date,
+                    'Post Date': item.post_date,
+                    'Merchant Name': item.merchant_name,
+                    'Billing Amount': item.billing_amount,
+                    'TPS(GST)': "",
+                    'TVQ(QST)': "",
+                    'Taxable Amount': "",
+                    'Purpose': "",
+                    'Category': "",
+                    'Account': "",
+                    'Project': "",
+                    'Attendees:': "",
+                    'Full Name': item.first_name.upper() + " " + item.last_name.upper(),
+                    'Matched': False,
+                    }
+                
+                    return_data.append(item_dict)
+
                     continue
                 
                 except MultipleObjectsReturned:
@@ -227,6 +246,7 @@ class DownloadTransactions(APIView):
                     'Project': match_item.project,
                     'Attendees:': match_item.attendees,
                     'Full Name': item.first_name.upper() + " " + item.last_name.upper(),
+                    'Matched:': True,
                 }
                 
                 return_data.append(item_dict)
