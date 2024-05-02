@@ -1,7 +1,6 @@
-from rest_framework.decorators import permission_classes
 from rest_framework.response import Response
 from django.core.exceptions import ValidationError
-from django.contrib.auth import get_user_model, login, logout
+from django.contrib.auth import login, logout
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerializer, ChangePasswordSerializer
@@ -10,7 +9,6 @@ from .validations import custom_validation, validate_email, validate_password
 from .models import TaxTransactionForm, BankTransactionList
 from datetime import datetime
 from django.http import HttpRequest, JsonResponse, HttpResponse
-import pandas as pd
 from django.conf import settings
 import os
 import shutil
@@ -120,6 +118,22 @@ class CardTransactionUpload(APIView):
             return Response({ "message": f"error: {e}" }, status=status.HTTP_400_BAD_REQUEST)
 
 class CardTransactionHistory(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = (SessionAuthentication,)
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+
+        first_name = serializer.data['first_name']
+        last_name = serializer.data['last_name']
+
+        today = datetime.now().date()
+
+        my_data = TaxTransactionForm.objects.filter(trans_date__range=(today.replace(day=1), today), first_name=first_name.upper(), last_name=last_name.upper())
+        data_list = list(my_data.values())
+        
+        return JsonResponse(data_list, safe=False)
+
+class EntireCardTransactionHistory(APIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = (SessionAuthentication,)
     def get(self, request):

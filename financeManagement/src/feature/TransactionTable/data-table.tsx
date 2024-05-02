@@ -113,7 +113,7 @@ export function DataTable<TData, TValue>({
 
   async function handleReset() {
     await clientII
-      .get("/api/card-transaction-history/", {
+      .get("/api/entire-card-transaction-history/", {
         headers: { "Content-Type": "application/json" },
       })
       .then((res) => {
@@ -202,7 +202,7 @@ export function DataTable<TData, TValue>({
           <div className="flex gap-1">
             <Button onClick={handleFilterByDates}>Filter by dates</Button>
             <Button onClick={handleReset} variant="outline">
-              Reset
+              Show All Transactions
             </Button>
           </div>
         </div>
