@@ -44,8 +44,13 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  const { clientI, clientII, userFirstName, userLastName, setTableData } =
-    useHooks();
+  const {
+    clientI,
+    clientII,
+    userFirstName,
+    userLastName,
+    setTableData,
+  } = useHooks();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -99,6 +104,7 @@ export function DataTable<TData, TValue>({
       first_name: userFirstName,
       last_name: userLastName,
     });
+
     await clientI
       .post("/api/filter-by-dates/", data, {
         headers: { "Content-Type": "application/json" },
@@ -108,19 +114,6 @@ export function DataTable<TData, TValue>({
       })
       .catch(() => {
         toast("Unable to filter by given dates");
-      });
-  }
-
-  async function handleReset() {
-    await clientII
-      .get("/api/entire-card-transaction-history/", {
-        headers: { "Content-Type": "application/json" },
-      })
-      .then((res) => {
-        setTableData(res.data);
-      })
-      .catch(() => {
-        toast("Unable to reload the card transaction history");
       });
   }
 
@@ -200,10 +193,7 @@ export function DataTable<TData, TValue>({
             </PopoverContent>
           </Popover>
           <div className="flex gap-1">
-            <Button onClick={handleFilterByDates}>Filter by dates</Button>
-            <Button onClick={handleReset} variant="outline">
-              Show All Transactions
-            </Button>
+            <Button onClick={handleFilterByDates}>Search</Button>
           </div>
         </div>
         <div className="w-full flex gap-1 lg:justify-end">

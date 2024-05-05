@@ -18,7 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { addDays, format, startOfMonth } from "date-fns";
+import { format, startOfMonth } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 import { cn } from "@/lib/utils";
@@ -43,7 +43,6 @@ export function MyMatchingDataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const {
     clientI,
-    clientII,
     userFirstName,
     userLastName,
     setMatchingTableData,
@@ -93,19 +92,6 @@ export function MyMatchingDataTable<TData, TValue>({
       });
   }
 
-  async function handleReset() {
-    await clientII
-      .get("/api/matching-transaction-lists/", {
-        headers: { "Content-Type": "application/json" },
-      })
-      .then((res) => {
-        setMatchingTableData(res.data);
-      })
-      .catch(() => {
-        toast("Unable to reload the card transaction history");
-      });
-  }
-
   return (
     <>
       <div className="lg:flex gap-2 sm:space-y-2 mb-2">
@@ -147,12 +133,7 @@ export function MyMatchingDataTable<TData, TValue>({
         </Popover>
         <div className="flex gap-2">
           <div>
-            <Button onClick={handleFilterByDates}>Filter by dates</Button>
-          </div>
-          <div>
-            <Button onClick={handleReset} variant="outline">
-              Reset
-            </Button>
+            <Button onClick={handleFilterByDates}>Search</Button>
           </div>
         </div>
       </div>
