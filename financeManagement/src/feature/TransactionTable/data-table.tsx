@@ -32,6 +32,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { AlertCircle } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { saveAs } from "file-saver";
 import { EditTransactionInformation } from "@/feature/EditTransactionInformation";
 
@@ -83,6 +94,14 @@ export function DataTable<TData, TValue>({
       columnFilters,
     },
   });
+
+  function preHandleDelete() {
+    const data = table.getFilteredSelectedRowModel().rows;
+
+    if (data.length === 0) {
+      toast("Unable to delete the data, please only select at least one item");
+    }
+  }
 
   async function handleDelete() {
     const data = table.getFilteredSelectedRowModel().rows;
@@ -242,9 +261,35 @@ export function DataTable<TData, TValue>({
               Edit
             </Button>
           )}
-          <Button variant="outline" onClick={handleDelete}>
-            Delete
-          </Button>
+          {table.getFilteredSelectedRowModel().rows.length > 0 ? (
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline">Delete</Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px] rounded-xl">
+                <DialogHeader>
+                  <DialogTitle>Delete</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to delete? You cannot undo the action.
+                  </DialogDescription>
+                </DialogHeader>{" "}
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Alert</AlertTitle>
+                  <AlertDescription>
+                    Are you sure you want to delete? You cannot undo the action.
+                  </AlertDescription>
+                </Alert>
+                <DialogFooter>
+                  <Button onClick={handleDelete}>Delete</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          ) : (
+            <Button variant="outline" onClick={preHandleDelete}>
+              Delete
+            </Button>
+          )}
         </div>
       </div>
       <div className="flex first-line:rounded-md border">
