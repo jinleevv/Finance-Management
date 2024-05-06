@@ -12,12 +12,14 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useHooks } from "@/hooks";
 import { MainPageSectionButton } from "@/feature/MainPageFeatures/MainPageSectionButton";
+import { startOfMonth } from "date-fns";
 
 const MainPage = () => {
   const navigate = useNavigate();
   const {
     clientII,
     department,
+    setCalenderDate,
     setTableData,
     setMissingTableData,
     setMissingBankTableData,
@@ -38,6 +40,10 @@ const MainPage = () => {
       .catch(() => {
         toast("Unable to update the table");
       });
+    setCalenderDate({
+      from: startOfMonth(new Date()),
+      to: new Date(),
+    })
     navigate("/main/view-uploaded-transactions");
   }
 

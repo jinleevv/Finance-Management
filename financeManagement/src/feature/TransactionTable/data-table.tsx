@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -49,6 +49,8 @@ export function DataTable<TData, TValue>({
     clientII,
     userFirstName,
     userLastName,
+    calenderDate,
+    setCalenderDate,
     setTableData,
   } = useHooks();
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -58,6 +60,13 @@ export function DataTable<TData, TValue>({
     from: startOfMonth(new Date()),
     to: new Date(),
   });
+
+  useEffect(() => {
+    setDate({
+      from: calenderDate.from,
+      to: calenderDate.to,
+    });
+  }, [calenderDate]);
 
   const table = useReactTable({
     data,
@@ -115,6 +124,11 @@ export function DataTable<TData, TValue>({
       .catch(() => {
         toast("Unable to filter by given dates");
       });
+
+    setCalenderDate({
+      from: date.from,
+      to: date.to,
+    });
   }
 
   function handleEditError() {
@@ -145,8 +159,27 @@ export function DataTable<TData, TValue>({
           });
 
         const blob = new Blob([response.data], { type: "application/zip" });
+
+        // const opts = {
+        //   suggestedName: `images_${todayDateString}.zip`,
+        //   types: [
+        //     {
+        //       description: "receipt images",
+        //       accept: {
+        //         "application/zip": [".zip"],
+        //       },
+        //     },
+        //   ],
+        // };
+
+        // const fileHandle = await window.showSaveFilePicker(opts);
+        // let stream = await fileHandle.createWritable();
+        // await stream.write(blob);
+        // await stream.close();
+
         saveAs(blob, `images_${todayDateString}.zip`);
       } catch (error) {
+        console.log(error);
         toast("Error downloading images");
       }
     }

@@ -1,6 +1,8 @@
 import axios from "axios";
+import { startOfMonth } from "date-fns";
 import { useAtom } from "jotai";
 import { atomWithImmer } from "jotai-immer";
+import { DateRange } from "react-day-picker";
 
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
@@ -44,6 +46,11 @@ export type ForceBankData = {
   last_name: string;
 };
 
+export type DateRangeType = {
+  from: string;
+  to: string;
+};
+
 const logedInUserAtom = atomWithImmer<boolean>(false);
 const userFirstNameAtom = atomWithImmer<string>("");
 const userLastNameAtom = atomWithImmer<string>("");
@@ -69,6 +76,14 @@ const forceMatchBank = atomWithImmer<ForceBankData>({
   merchant_name: "",
   first_name: "",
   last_name: "",
+});
+
+const initialFromDate = startOfMonth(new Date());
+const initialToDate = new Date();
+
+const dateAtom = atomWithImmer<DateRange | undefined>({
+  from: initialFromDate,
+  to: initialToDate,
 });
 
 export function useHooks() {
@@ -100,6 +115,7 @@ export function useHooks() {
   const [department, setDepartment] = useAtom(departmentAtom);
   const [forceMatchUserData, setForceMatchUserData] = useAtom(forceMatchUser);
   const [forceMatchBankData, setForceMatchBankData] = useAtom(forceMatchBank);
+  const [calenderDate, setCalenderDate] = useAtom(dateAtom);
 
   return {
     clientI,
@@ -131,5 +147,7 @@ export function useHooks() {
     setForceMatchUserData,
     forceMatchBankData,
     setForceMatchBankData,
+    calenderDate,
+    setCalenderDate,
   };
 }
